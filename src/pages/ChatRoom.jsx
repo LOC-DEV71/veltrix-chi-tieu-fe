@@ -17,7 +17,7 @@ const ChatRoom = () => {
   const [inputText, setInputText] = useState('');
   const [loading, setLoading] = useState(true);
   const [isSending, setIsSending] = useState(false);
-  const messagesEndRef = useRef(null);
+  const messagesContainerRef = useRef(null);
 
   useEffect(() => {
     const fetchMessages = async () => {
@@ -69,7 +69,10 @@ const ChatRoom = () => {
   }, [socket, friendId]);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    const container = messagesContainerRef.current;
+    if (container) {
+      container.scrollTop = container.scrollHeight;
+    }
   };
 
   const handleSend = async (e) => {
@@ -117,7 +120,7 @@ const ChatRoom = () => {
         <div style={{ width: 24 }}></div>
       </div>
 
-      <div className="chatroom-messages">
+      <div className="chatroom-messages" ref={messagesContainerRef}>
         {loading ? (
           <div className="loading-state">Đang tải...</div>
         ) : (
@@ -146,7 +149,6 @@ const ChatRoom = () => {
             );
           })
         )}
-        <div ref={messagesEndRef} />
       </div>
 
       <form className="chatroom-input-area" onSubmit={handleSend}>

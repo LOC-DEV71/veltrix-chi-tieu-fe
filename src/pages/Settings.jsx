@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import BottomNav from '../components/BottomNav';
-import { User, Palette, Globe, Info, LogOut, ChevronRight, Calendar, Moon, Sun, X, Loader2, Image as ImageIcon } from 'lucide-react';
+import { User, Palette, Globe, Info, LogOut, ChevronRight, Calendar, Moon, Sun, X, Loader2, Image as ImageIcon, Bell } from 'lucide-react';
 import Swal from 'sweetalert2';
 import api from '../services/api';
 import './Settings.css';
@@ -70,6 +70,59 @@ const Settings = () => {
       cancelBgAnimation();
     } finally {
       setIsUploadingBg(false);
+    }
+  };
+
+  const handleEnablePush = async () => {
+    if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+      Swal.fire('Không hỗ trợ', 'Trình duyệt của bạn không hỗ trợ nhận thông báo.', 'warning');
+      return;
+    }
+
+    try {
+      const permission = await Notification.requestPermission();
+      if (permission === 'granted') {
+        const registration = await navigator.serviceWorker.ready;
+        const publicVapidKey = import.meta.env.VITE_VAPID_PUBLIC_KEY;
+        
+        // Helper
+        const urlBase64ToUint8Array = (base64String) => {
+          const padding = '='.repeat((4 - base64String.length % 4) % 4);
+          const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+          const rawData = window.atob(base64);
+          const outputArray = new Uint8Array(rawData.length);
+          for (let i = 0; i < rawData.length; ++i) {
+            outputArray[i] = rawData.charCodeAt(i);
+          }
+          return outputArray;
+        };
+
+        const existingSub = await registration.pushManager.getSubscription();
+        if (existingSub) {
+          await existingSub.unsubscribe();
+        }
+
+        const newSubscription = await registration.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: urlBase64ToUint8Array(publicVapidKey),
+        });
+
+        await api.post('/notifications/subscribe', newSubscription.toJSON());
+        
+        Swal.fire({
+          icon: 'success',
+          title: 'Thành công!',
+          text: 'Đã bật thông báo thành công! Bây giờ bạn sẽ nhận được thông báo từ ứng dụng.',
+          background: '#18181b', color: '#fff',
+          confirmButtonColor: '#10b981',
+          customClass: { popup: 'glass-panel' }
+        });
+      } else {
+        Swal.fire('Từ chối', 'Bạn đã từ chối cấp quyền gửi thông báo.', 'error');
+      }
+    } catch (error) {
+      console.error(error);
+      Swal.fire('Lỗi', 'Có lỗi xảy ra khi cài đặt thông báo.', 'error');
     }
   };
 
@@ -187,6 +240,18 @@ const Settings = () => {
         {/* System Group */}
         <div className="settings-group">
           <div className="settings-group-title">Hệ thống</div>
+
+          <div className="settings-row" onClick={handleEnablePush}>
+            <div className="settings-row-left">
+              <div className="settings-icon-wrapper yellow">
+                <Bell size={20} />
+              </div>
+              <span className="settings-label">Bật thông báo đẩy</span>
+            </div>
+            <div className="settings-value">
+              <ChevronRight size={18} className="settings-arrow" />
+            </div>
+          </div>
 
           {user?.createdAt && (
             <div className="settings-row">

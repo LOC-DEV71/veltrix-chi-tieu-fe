@@ -80,12 +80,12 @@ const Home = () => {
     return (
       <div className="home-container" style={{ paddingTop: '60px' }}>
         <div style={{ padding: '20px', animation: 'pulse 1.5s ease-in-out infinite' }}>
-          <div style={{ height: '24px', background: 'rgba(255,255,255,0.07)', borderRadius: '8px', width: '60%', marginBottom: '8px' }} />
-          <div style={{ height: '16px', background: 'rgba(255,255,255,0.04)', borderRadius: '8px', width: '40%', marginBottom: '30px' }} />
-          <div style={{ height: '140px', background: 'rgba(255,255,255,0.06)', borderRadius: '20px', marginBottom: '24px' }} />
-          <div style={{ height: '20px', background: 'rgba(255,255,255,0.07)', borderRadius: '8px', width: '50%', marginBottom: '16px' }} />
+          <div style={{ height: '24px', background: 'var(--skeleton-base)', borderRadius: '8px', width: '60%', marginBottom: '8px' }} />
+          <div style={{ height: '16px', background: 'var(--skeleton-shine)', borderRadius: '8px', width: '40%', marginBottom: '30px' }} />
+          <div style={{ height: '140px', background: 'var(--skeleton-base)', borderRadius: '20px', marginBottom: '24px' }} />
+          <div style={{ height: '20px', background: 'var(--skeleton-base)', borderRadius: '8px', width: '50%', marginBottom: '16px' }} />
           {[1,2,3].map(i => (
-            <div key={i} style={{ height: '80px', background: 'rgba(255,255,255,0.05)', borderRadius: '16px', marginBottom: '12px' }} />
+            <div key={i} style={{ height: '80px', background: 'var(--skeleton-shine)', borderRadius: '16px', marginBottom: '12px' }} />
           ))}
         </div>
       </div>

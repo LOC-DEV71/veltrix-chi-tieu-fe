@@ -45,7 +45,7 @@
 .history-title {
   font-size: 24px;
   font-weight: 700;
-  color: #fff;
+  color: var(--text-primary);
   letter-spacing: 0.5px;
 }
 
@@ -83,14 +83,15 @@
 }
 
 .history-filter-input {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: #fff;
+  background: var(--bg-glass);
+  border: var(--glass-border);
+  color: var(--text-primary);
   padding: 10px 12px;
   border-radius: 12px;
   font-size: 14px;
   outline: none;
   width: 100%;
+  transition: all 0.3s ease;
 }
 
 .history-filter-input.select {
@@ -162,7 +163,7 @@
 .history-item-name {
   font-weight: 600;
   font-size: 15px;
-  color: #fff;
+  color: var(--text-primary);
 }
 
 .history-item-note {
@@ -247,7 +248,7 @@
 .receipt-modal-title {
   font-size: 16px;
   font-weight: 600;
-  color: #fff;
+  color: var(--text-primary);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -256,7 +257,7 @@
 .receipt-modal-close {
   background: rgba(255, 255, 255, 0.1);
   border: none;
-  color: #fff;
+  color: var(--text-primary);
   width: 32px;
   height: 32px;
   border-radius: 50%;

@@ -86,10 +86,10 @@ const History = () => {
   if (loading && transactions.length === 0) return (
     <div className="history-container">
       <div style={{ padding: '20px', animation: 'pulse 1.5s ease-in-out infinite' }}>
-        <div style={{ height: '40px', background: 'rgba(255,255,255,0.07)', borderRadius: '12px', marginBottom: '16px' }} />
-        <div style={{ height: '40px', background: 'rgba(255,255,255,0.05)', borderRadius: '12px', marginBottom: '24px' }} />
+        <div style={{ height: '40px', background: 'var(--skeleton-base)', borderRadius: '12px', marginBottom: '16px' }} />
+        <div style={{ height: '40px', background: 'var(--skeleton-shine)', borderRadius: '12px', marginBottom: '24px' }} />
         {[1,2,3,4,5].map(i => (
-          <div key={i} style={{ height: '72px', background: 'rgba(255,255,255,0.05)', borderRadius: '16px', marginBottom: '10px' }} />
+          <div key={i} style={{ height: '72px', background: 'var(--skeleton-base)', borderRadius: '16px', marginBottom: '10px' }} />
         ))}
       </div>
     </div>

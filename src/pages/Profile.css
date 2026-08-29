@@ -145,14 +145,14 @@
 }
 
 .profile-input {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--bg-glass);
+  border: var(--glass-border);
   padding: 16px 20px;
   border-radius: 16px;
-  color: white;
+  color: var(--text-primary);
   font-size: 16px;
   outline: none;
-  transition: border-color 0.2s ease;
+  transition: border-color 0.2s ease, background 0.3s ease;
 }
 
 .profile-input:focus {
@@ -160,10 +160,9 @@
 }
 
 .profile-input:disabled {
-  background: rgba(0, 0, 0, 0.2);
-  color: rgba(255, 255, 255, 0.5);
+  opacity: 0.5;
+  color: var(--text-secondary);
   cursor: not-allowed;
-  border-color: rgba(255, 255, 255, 0.05);
 }
 
 .profile-submit-btn {

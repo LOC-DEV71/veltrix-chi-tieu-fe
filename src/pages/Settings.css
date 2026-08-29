@@ -19,9 +19,7 @@
 .settings-title {
   font-size: 24px;
   font-weight: 700;
-  background: linear-gradient(135deg, #fff 0%, #cbd5e1 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: var(--text-primary);
 }
 
 .settings-group {
@@ -116,5 +114,6 @@
 }
 
 .settings-arrow {
-  color: rgba(255, 255, 255, 0.2);
+  color: var(--text-secondary);
+  opacity: 0.5;
 }

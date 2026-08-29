@@ -93,9 +93,9 @@ const Statistics = () => {
   if (loading && categories.length === 0 && !budget) {
     return (
       <div className="stats-container" style={{ padding: '20px', animation: 'pulse 1.5s ease-in-out infinite' }}>
-        <div style={{ height: '48px', background: 'rgba(255,255,255,0.07)', borderRadius: '12px', marginBottom: '20px' }} />
-        <div style={{ height: '220px', background: 'rgba(255,255,255,0.06)', borderRadius: '20px', marginBottom: '16px' }} />
-        <div style={{ height: '180px', background: 'rgba(255,255,255,0.05)', borderRadius: '20px' }} />
+        <div style={{ height: '48px', background: 'var(--skeleton-base)', borderRadius: '12px', marginBottom: '20px' }} />
+        <div style={{ height: '220px', background: 'var(--skeleton-shine)', borderRadius: '20px', marginBottom: '16px' }} />
+        <div style={{ height: '180px', background: 'var(--skeleton-shine)', borderRadius: '20px' }} />
       </div>
     );
   }

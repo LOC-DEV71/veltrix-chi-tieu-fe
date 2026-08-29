@@ -19,21 +19,20 @@
 .statistics-title {
   font-size: 28px;
   font-weight: 700;
-  background: linear-gradient(135deg, #fff 0%, #a1a1aa 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: var(--text-primary);
 }
 
 .statistics-month-selector {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: #fff;
+  background: var(--bg-glass);
+  border: var(--glass-border);
+  color: var(--text-primary);
   padding: 8px 12px;
   border-radius: 12px;
   font-size: 14px;
   outline: none;
   cursor: pointer;
   font-weight: 500;
+  transition: all 0.3s ease;
 }
 
 .statistics-month-selector::-webkit-calendar-picker-indicator {
@@ -75,7 +74,7 @@
 .statistics-overview-amount {
   font-size: 32px;
   font-weight: 800;
-  color: #fff;
+  color: var(--text-primary);
 }
 
 /* Charts Wrapper */
@@ -95,7 +94,7 @@
 .statistics-chart-title {
   font-size: 16px;
   font-weight: 600;
-  color: #fff;
+  color: var(--text-primary);
   margin-bottom: 20px;
   align-self: flex-start;
   padding-left: 10px;
@@ -118,7 +117,7 @@
 }
 
 .custom-tooltip-value {
-  color: #fff;
+  color: var(--text-primary);
   font-weight: 600;
   font-size: 16px;
 }

@@ -54,22 +54,22 @@
 .success-title {
   font-size: 20px;
   font-weight: 600;
-  color: #fff;
+  color: var(--text-primary);
   margin-bottom: 8px;
 }
 
 .success-amount {
   font-size: 36px;
   font-weight: 800;
-  color: #fff;
+  color: var(--text-primary);
   margin-bottom: 30px;
 }
 
 .success-card {
   width: 100%;
   max-width: 400px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--bg-glass);
+  border: var(--glass-border);
   border-radius: 20px;
   padding: 24px;
   backdrop-filter: blur(16px);
@@ -92,7 +92,7 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+  border-bottom: 1px dashed var(--border-color);
   padding-bottom: 16px;
 }
 
@@ -109,7 +109,7 @@
 
 .success-value {
   font-size: 14px;
-  color: #fff;
+  color: var(--text-primary);
   font-weight: 500;
   flex: 2;
   text-align: right;
@@ -143,11 +143,11 @@
 }
 
 .success-btn-secondary {
-  background: rgba(255, 255, 255, 0.05);
-  color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--bg-glass);
+  color: var(--text-primary);
+  border: var(--glass-border);
 }
 
 .success-btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--bg-glass-hover);
 }

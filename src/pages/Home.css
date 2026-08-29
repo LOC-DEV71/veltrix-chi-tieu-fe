@@ -4,11 +4,11 @@
   min-height: 100vh;
   padding: 20px;
   padding-bottom: 100px;
-  /* Premium radial gradient background */
-  background: radial-gradient(circle at 10% 10%, #1e1b4b 0%, var(--bg-primary, #09090b) 50%);
-  color: var(--text-primary, #fff);
+  background: var(--bg-primary);
+  color: var(--text-primary);
   position: relative;
   overflow-x: hidden;
+  transition: background 0.5s ease, color 0.5s ease;
 }
 
 /* Header Section */
@@ -74,9 +74,7 @@
 .home-balance-amount {
   font-size: 42px;
   font-weight: 800;
-  background: linear-gradient(135deg, #fff 0%, #cbd5e1 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: var(--text-primary);
   letter-spacing: -1px;
 }
 
@@ -311,12 +309,12 @@
   top: 55px;
   right: 0;
   width: 160px;
-  background: rgba(15, 15, 20, 0.85);
+  background: var(--bg-glass);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: var(--glass-border);
   border-radius: 12px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  box-shadow: var(--shadow-glass);
   z-index: 100;
   display: flex;
   flex-direction: column;
@@ -397,7 +395,7 @@
 .home-modal-title {
   font-size: 18px;
   font-weight: 600;
-  color: #fff;
+  color: var(--text-primary);
 }
 
 .home-modal-close {
@@ -441,7 +439,7 @@
 .home-modal-name {
   font-size: 20px;
   font-weight: 700;
-  color: #fff;
+  color: var(--text-primary);
   margin-bottom: 4px;
 }
 

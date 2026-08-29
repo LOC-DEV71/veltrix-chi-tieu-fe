@@ -174,7 +174,7 @@ const SetupBudget = () => {
       <div className="setup-header">
         <button 
           onClick={() => navigate(-1)} 
-          style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer' }}
+          style={{ background: 'none', border: 'none', color: 'var(--text-primary)', cursor: 'pointer' }}
         >
           <X size={24} />
         </button>

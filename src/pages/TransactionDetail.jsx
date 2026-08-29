@@ -86,7 +86,7 @@ const TransactionDetail = () => {
       <div style={{ width: '100%', maxWidth: '400px', display: 'flex', justifyContent: 'space-between', zIndex: 10, paddingBottom: '20px' }}>
         <button 
           onClick={() => navigate(-1)} 
-          style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer', padding: '8px' }}
+          style={{ background: 'none', border: 'none', color: 'var(--text-primary)', cursor: 'pointer', padding: '8px' }}
         >
           <ArrowLeft size={24} />
         </button>
@@ -94,7 +94,7 @@ const TransactionDetail = () => {
         <div style={{ width: '40px' }}></div>
       </div>
 
-      <div ref={receiptRef} style={{ width: '100%', maxWidth: '400px', padding: '20px', borderRadius: '24px', position: 'relative' }}>
+      <div ref={receiptRef} style={{ width: '100%', maxWidth: '400px', padding: '20px', borderRadius: '24px', position: 'relative', background: 'var(--bg-secondary)' }}>
         {/* Glow effect for capture */}
         <div style={{
           position: 'absolute', top: '-50px', left: '50%', transform: 'translateX(-50%)',

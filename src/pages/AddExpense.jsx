@@ -69,13 +69,13 @@ const AddExpense = () => {
   if (isLoadingData) {
     return (
       <div style={{ padding: '80px 20px 20px', animation: 'pulse 1.5s ease-in-out infinite' }}>
-        <div style={{ height: '56px', background: 'rgba(255,255,255,0.07)', borderRadius: '16px', marginBottom: '16px' }} />
+        <div style={{ height: '56px', background: 'var(--skeleton-base)', borderRadius: '16px', marginBottom: '16px' }} />
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', marginBottom: '16px' }}>
           {[1,2,3,4,5,6].map(i => (
-            <div key={i} style={{ height: '80px', background: 'rgba(255,255,255,0.05)', borderRadius: '16px' }} />
+            <div key={i} style={{ height: '80px', background: 'var(--skeleton-shine)', borderRadius: '16px' }} />
           ))}
         </div>
-        <div style={{ height: '52px', background: 'rgba(255,255,255,0.07)', borderRadius: '16px' }} />
+        <div style={{ height: '52px', background: 'var(--skeleton-base)', borderRadius: '16px' }} />
       </div>
     );
   }

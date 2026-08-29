@@ -18,7 +18,8 @@ import './index.css';
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
   
-  if (loading) return <LoadingScreen />;
+  // Only block if still doing initial auth check, then redirect if not logged in
+  if (loading) return null;
   if (!user) return <Navigate to="/login" replace />;
   
   return children;

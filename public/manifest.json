@@ -1,17 +1,42 @@
 {
   "short_name": "MoneyFlow",
   "name": "MoneyFlow - Quản lý tài chính cá nhân",
+  "description": "Quản lý chi tiêu, ngân sách và mục tiêu tài chính cá nhân",
   "icons": [
     {
       "src": "/logo-app.png",
       "type": "image/png",
-      "sizes": "192x192 512x512",
-      "purpose": "any maskable"
+      "sizes": "192x192",
+      "purpose": "any"
+    },
+    {
+      "src": "/logo-app.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any"
+    },
+    {
+      "src": "/logo-app.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/logo-app.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "maskable"
     }
   ],
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
   "theme_color": "#09090b",
   "background_color": "#09090b",
-  "orientation": "portrait"
+  "orientation": "portrait",
+  "categories": ["finance", "productivity"],
+  "lang": "vi",
+  "dir": "ltr",
+  "prefer_related_applications": false
 }

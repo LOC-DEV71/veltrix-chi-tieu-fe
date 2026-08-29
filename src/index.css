@@ -84,13 +84,21 @@ body {
   background-color: var(--bg-primary);
   color: var(--text-primary);
   min-height: 100vh;
+  min-height: 100dvh; /* iOS fix */
   overflow-x: hidden;
   transition: background-color 0.5s ease, color 0.5s ease;
   /* Premium animated gradient background */
   background-image: radial-gradient(circle at 15% 50%, rgba(99, 102, 241, 0.15), transparent 25%),
                     radial-gradient(circle at 85% 30%, rgba(139, 92, 246, 0.15), transparent 25%);
   background-attachment: fixed;
+  /* iOS PWA: tắt bounce scroll ở body */
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: touch;
+  /* iOS safe area */
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
 }
+
 
 [data-theme='light'] body {
   background-image: radial-gradient(circle at 15% 50%, rgba(79, 70, 229, 0.06), transparent 25%),
@@ -102,10 +110,22 @@ body {
   max-width: 480px;
   margin: 0 auto;
   min-height: 100vh;
+  min-height: 100dvh; /* iOS fix */
   position: relative;
   background-color: transparent;
   overflow: hidden;
+  /* iOS standalone: loại bỏ padding thừa */
+  padding-top: 0;
 }
+
+/* iOS PWA standalone mode */
+@media (display-mode: standalone) {
+  body {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
 
 /* Glassmorphism utilities */
 .glass-panel {

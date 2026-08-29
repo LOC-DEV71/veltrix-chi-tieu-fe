@@ -1,12 +1,35 @@
 <!doctype html>
-<html lang="en">
+<html lang="vi">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="/logo-app.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+
+    <!-- PWA & Theme -->
     <meta name="theme-color" content="#09090b" />
     <link rel="manifest" href="/manifest.json" />
-    <link rel="apple-touch-icon" href="/logo-app.png" />
+
+    <!-- iOS PWA - QUAN TRỌNG để app chạy standalone trên iPhone -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="MoneyFlow" />
+    <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-192.png" />
+    <link rel="apple-touch-icon" sizes="152x152" href="/icons/icon-192.png" />
+    <link rel="apple-touch-icon" sizes="120x120" href="/icons/icon-192.png" />
+
+    <!-- iOS Splash Screens -->
+    <meta name="apple-touch-startup-image" href="/icons/splash.png" />
+
+    <!-- Android -->
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="application-name" content="MoneyFlow" />
+
+    <!-- SEO -->
+    <meta name="description" content="MoneyFlow - Quản lý tài chính cá nhân thông minh" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/logo-app.png" />
+
     <title>MoneyFlow</title>
   </head>
   <body>

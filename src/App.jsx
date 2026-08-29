@@ -1,6 +1,8 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { ThemeProvider } from './context/ThemeContext';
+import VortexOverlay from './components/VortexOverlay';
 import LoadingScreen from './components/LoadingScreen';
 import Home from './pages/Home';
 import Login from './pages/Login';
@@ -71,11 +73,14 @@ const AppRoutes = () => {
 
 const App = () => {
   return (
-    <AuthProvider>
-      <Router>
-        <AppRoutes />
-      </Router>
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <Router>
+          <VortexOverlay />
+          <AppRoutes />
+        </Router>
+      </AuthProvider>
+    </ThemeProvider>
   );
 };
 

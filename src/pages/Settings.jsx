@@ -1,13 +1,15 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import BottomNav from '../components/BottomNav';
-import { User, Palette, Globe, Info, LogOut, ChevronRight, Calendar } from 'lucide-react';
+import { User, Palette, Globe, Info, LogOut, ChevronRight, Calendar, Moon, Sun } from 'lucide-react';
 import Swal from 'sweetalert2';
 import './Settings.css';
 
 const Settings = () => {
   const { user, logout } = useAuth();
+  const { theme, toggleTheme, isAnimating } = useTheme();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -92,15 +94,19 @@ const Settings = () => {
         <div className="settings-group">
           <div className="settings-group-title">Tùy chỉnh</div>
           
-          <div className="settings-row" onClick={() => handlePlaceholderClick('Đổi giao diện')}>
+          <div
+            className="settings-row"
+            onClick={toggleTheme}
+            style={{ cursor: isAnimating ? 'wait' : 'pointer', opacity: isAnimating ? 0.7 : 1 }}
+          >
             <div className="settings-row-left">
               <div className="settings-icon-wrapper purple">
-                <Palette size={20} />
+                {theme === 'dark' ? <Moon size={20} /> : <Sun size={20} />}
               </div>
               <span className="settings-label">Giao diện</span>
             </div>
             <div className="settings-value">
-              <span>Tối (Dark)</span>
+              <span>{theme === 'dark' ? 'Tối (Dark)' : 'Sáng (Light)'}</span>
               <ChevronRight size={18} className="settings-arrow" />
             </div>
           </div>

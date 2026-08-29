@@ -67,6 +67,12 @@
   gap: 15px;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.chatroom-messages::-webkit-scrollbar {
+  display: none;
 }
 
 .message-wrapper {

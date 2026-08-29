@@ -14,9 +14,13 @@ export const SocketProvider = ({ children }) => {
 
   useEffect(() => {
     if (user) {
-      // Connect to Socket.io server
-      const newSocket = io(import.meta.env.VITE_API_URL || 'http://localhost:5000', {
+      // Socket.io cần URL gốc (không có /api)
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+      const socketUrl = apiUrl.replace(/\/api\/?$/, '');
+      
+      const newSocket = io(socketUrl, {
         withCredentials: true,
+        transports: ['websocket', 'polling'],
       });
 
       setSocket(newSocket);

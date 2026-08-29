@@ -42,16 +42,41 @@ const TransactionDetail = () => {
         logging: false
       });
       
-      const image = canvas.toDataURL('image/png');
-      const link = document.createElement('a');
-      link.href = image;
-      link.download = `BienLai_${transaction._id.substring(0,6)}.png`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      canvas.toBlob(async (blob) => {
+        if (!blob) {
+          setIsCapturing(false);
+          return;
+        }
+        
+        const fileName = `BienLai_${transaction._id.substring(0,6)}.png`;
+        const file = new File([blob], fileName, { type: 'image/png' });
+
+        // iOS Safari & Mobile standard: Share API
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          try {
+            await navigator.share({
+              files: [file],
+              title: 'Biên lai giao dịch'
+            });
+          } catch (error) {
+            console.error('Lỗi khi share ảnh:', error);
+          }
+        } else {
+          // Fallback for Desktop/Unsupported browsers
+          const image = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = image;
+          link.download = fileName;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          URL.revokeObjectURL(image);
+        }
+        setIsCapturing(false);
+      }, 'image/png');
+
     } catch (error) {
       console.error('Lỗi khi tạo ảnh biên lai:', error);
-    } finally {
       setIsCapturing(false);
     }
   };

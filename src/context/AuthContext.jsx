@@ -9,9 +9,26 @@ export const AuthProvider = ({ children }) => {
 
   const fetchUser = async () => {
     try {
+      // Capture token from URL if redirected from Google OAuth
+      const urlParams = new URLSearchParams(window.location.search);
+      const tokenFromUrl = urlParams.get('token');
+      
+      if (tokenFromUrl) {
+        localStorage.setItem('token', tokenFromUrl);
+        // Clean up URL
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+
+      const token = localStorage.getItem('token');
+      if (!token) {
+        setLoading(false);
+        return;
+      }
+
       const { data } = await api.get('/auth/me');
       setUser(data);
     } catch (error) {
+      localStorage.removeItem('token');
       setUser(null);
     } finally {
       setLoading(false);
@@ -32,12 +49,18 @@ export const AuthProvider = ({ children }) => {
 
   const loginWithEmail = async (email, password) => {
     const { data } = await api.post('/auth/login', { email, password });
+    if (data.token) {
+      localStorage.setItem('token', data.token);
+    }
     setUser(data);
     return data;
   };
 
   const registerWithEmail = async (name, email, password) => {
     const { data } = await api.post('/auth/register', { name, email, password });
+    if (data.token) {
+      localStorage.setItem('token', data.token);
+    }
     setUser(data);
     return data;
   };
@@ -45,9 +68,11 @@ export const AuthProvider = ({ children }) => {
   const logout = async () => {
     try {
       await api.post('/auth/logout');
-      setUser(null);
     } catch (error) {
       console.error('Logout failed', error);
+    } finally {
+      localStorage.removeItem('token');
+      setUser(null);
     }
   };
 

@@ -83,17 +83,7 @@ const History = () => {
     return new Date(dateString).toLocaleDateString('vi-VN', options);
   };
 
-  if (loading && transactions.length === 0) return (
-    <div className="history-container">
-      <div style={{ padding: '20px', animation: 'pulse 1.5s ease-in-out infinite' }}>
-        <div style={{ height: '40px', background: 'var(--skeleton-base)', borderRadius: '12px', marginBottom: '16px' }} />
-        <div style={{ height: '40px', background: 'var(--skeleton-shine)', borderRadius: '12px', marginBottom: '24px' }} />
-        {[1,2,3,4,5].map(i => (
-          <div key={i} style={{ height: '72px', background: 'var(--skeleton-base)', borderRadius: '16px', marginBottom: '10px' }} />
-        ))}
-      </div>
-    </div>
-  );
+
 
   return (
     <div className="history-container">
@@ -150,7 +140,13 @@ const History = () => {
       </div>
 
       <div className="history-list">
-        {transactions.length === 0 ? (
+        {loading && transactions.length === 0 ? (
+          <div style={{ animation: 'pulse 1.5s ease-in-out infinite' }}>
+            {[1, 2, 3, 4, 5].map(i => (
+              <div key={i} style={{ height: '72px', background: 'var(--skeleton-base)', borderRadius: '16px', marginBottom: '12px' }} />
+            ))}
+          </div>
+        ) : transactions.length === 0 ? (
           <div style={{ textAlign: 'center', marginTop: '40px', color: 'var(--text-secondary)' }}>
             Chưa có giao dịch nào.
           </div>

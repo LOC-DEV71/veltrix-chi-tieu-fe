@@ -33,6 +33,7 @@ const Statistics = () => {
   const [budget, setBudget] = useState(null);
   const [categories, setCategories] = useState([]);
   const [totalSpent, setTotalSpent] = useState(0);
+  const [totalSavings, setTotalSavings] = useState(0);
 
   const fetchStatistics = async () => {
     try {
@@ -52,13 +53,21 @@ const Statistics = () => {
 
       const currentBudget = budgetRes.data;
 
-      // 2. Get categories
-      const categoriesRes = await api.get(`/categories?budgetId=${currentBudget._id}`);
-      let fetchedCategories = categoriesRes.data;
+      // 2 & 3. Dùng luôn dữ liệu nếu Backend đã gộp sẵn
+      let fetchedCategories = currentBudget.categories;
+      let transactions = currentBudget.transactions;
 
-      // 3. Get transactions
-      const txRes = await api.get(`/transactions?budgetId=${currentBudget._id}`);
-      const transactions = txRes.data;
+      if (!fetchedCategories || !transactions) {
+        const [categoriesRes, txRes] = await Promise.all([
+          api.get(`/categories?budgetId=${currentBudget._id}`),
+          api.get(`/transactions?budgetId=${currentBudget._id}`)
+        ]);
+        fetchedCategories = categoriesRes.data;
+        transactions = txRes.data;
+      }
+
+      const savingsRes = await api.get('/budgets/savings');
+      setTotalSavings(savingsRes.data.totalAccumulatedSavings || 0);
 
       // 4. Calculate stats
       let spent = 0;
@@ -90,15 +99,7 @@ const Statistics = () => {
     fetchStatistics();
   }, [selectedMonth]);
 
-  if (loading && categories.length === 0 && !budget) {
-    return (
-      <div className="stats-container" style={{ padding: '20px', animation: 'pulse 1.5s ease-in-out infinite' }}>
-        <div style={{ height: '48px', background: 'var(--skeleton-base)', borderRadius: '12px', marginBottom: '20px' }} />
-        <div style={{ height: '220px', background: 'var(--skeleton-shine)', borderRadius: '20px', marginBottom: '16px' }} />
-        <div style={{ height: '180px', background: 'var(--skeleton-shine)', borderRadius: '20px' }} />
-      </div>
-    );
-  }
+
 
   // Data for Donut Chart (Spent vs Remaining)
   const donutData = budget ? [
@@ -125,7 +126,12 @@ const Statistics = () => {
         />
       </div>
 
-      {!budget ? (
+      {loading && categories.length === 0 && !budget ? (
+        <div style={{ padding: '20px', animation: 'pulse 1.5s ease-in-out infinite' }}>
+          <div style={{ height: '220px', background: 'var(--skeleton-shine)', borderRadius: '20px', marginBottom: '16px' }} />
+          <div style={{ height: '180px', background: 'var(--skeleton-shine)', borderRadius: '20px' }} />
+        </div>
+      ) : !budget ? (
         <div className="statistics-empty">
           <p>Không có dữ liệu ngân sách cho tháng này.</p>
           <button className="btn btn-primary" style={{ marginTop: '16px' }} onClick={() => navigate('/setup-budget')}>
@@ -141,6 +147,11 @@ const Statistics = () => {
             <div style={{ fontSize: '14px', color: 'var(--text-secondary)', marginTop: '4px' }}>
               Ngân sách: {budget.totalMoney.toLocaleString()}đ
             </div>
+          </div>
+          
+          <div className="statistics-overview" style={{ marginTop: '16px', background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.02))', borderColor: 'rgba(16, 185, 129, 0.2)' }}>
+            <div className="statistics-overview-title" style={{ color: 'var(--text-primary)' }}>Tổng quỹ tiết kiệm tích lũy các tháng trước</div>
+            <div className="statistics-overview-amount" style={{ color: '#10b981' }}>{totalSavings.toLocaleString()}đ</div>
           </div>
 
           {categories.length === 0 ? (

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { X, Check, Plus, Trash2 } from 'lucide-react';
+import { X, Check, Plus, Trash2, Sparkles } from 'lucide-react';
 import api from '../services/api';
 import LoadingScreen from '../components/LoadingScreen';
 import './SetupBudget.css';
@@ -25,6 +25,12 @@ const SetupBudget = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [existingBudgetId, setExistingBudgetId] = useState(null);
+
+  // AI Modal States
+  const [showAiModal, setShowAiModal] = useState(false);
+  const [aiGoalName, setAiGoalName] = useState('');
+  const [aiGoalAmount, setAiGoalAmount] = useState('');
+  const [isAiLoading, setIsAiLoading] = useState(false);
 
   // Fetch existing budget on mount
   useEffect(() => {
@@ -160,7 +166,38 @@ const SetupBudget = () => {
     } catch (err) {
       console.error(err);
       alert(err.message || err.response?.data?.message || 'Có lỗi xảy ra khi tạo ngân sách');
+    } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handleAiSuggest = async (e) => {
+    e.preventDefault();
+    try {
+      setIsAiLoading(true);
+      const totalBudget = Number(totalBudgetStr.replace(/\D/g, ''));
+      const goalAmountNum = aiGoalAmount ? Number(aiGoalAmount.replace(/\D/g, '')) : 0;
+      
+      const res = await api.post('/ai/suggest-budget', {
+        income: totalBudget,
+        goalName: aiGoalName,
+        goalAmount: goalAmountNum
+      });
+      
+      const suggested = res.data.data;
+      const newCats = suggested.map((c, idx) => ({
+        id: 'ai_' + idx,
+        name: c.name,
+        icon: c.icon,
+        amount: c.amount,
+        pct: 0
+      }));
+      setCategories(newCats);
+      setShowAiModal(false);
+    } catch (err) {
+      alert(err.response?.data?.message || err.message);
+    } finally {
+      setIsAiLoading(false);
     }
   };
 
@@ -208,7 +245,16 @@ const SetupBudget = () => {
             </span>
           </div>
 
-          <div className="setup-cat-list">
+          <button 
+            type="button" 
+            className="ai-suggest-btn" 
+            onClick={() => setShowAiModal(true)}
+            style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'linear-gradient(90deg, #8b5cf6, #d946ef)', color: 'white', border: 'none', padding: '10px 16px', borderRadius: '20px', fontWeight: 'bold', cursor: 'pointer', marginBottom: '20px', width: '100%', justifyContent: 'center' }}
+          >
+            <Sparkles size={18} /> Nhờ AI chia ngân sách
+          </button>
+
+          <div className="budget-list">
             {categories.map(cat => (
               <div key={cat.id} className="setup-cat-item">
                 <div className="setup-cat-icon">{cat.icon}</div>
@@ -260,6 +306,41 @@ const SetupBudget = () => {
           Hoàn tất & Bắt đầu
         </button>
       </div>
+
+      {showAiModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h2 style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><Sparkles color="#8b5cf6" /> AI Tư vấn Ngân sách</h2>
+            <p className="modal-subtitle">Tháng này sếp có dự định tiết kiệm để mua gì không?</p>
+            <form onSubmit={handleAiSuggest}>
+              <div className="form-group">
+                <label>Mục tiêu (Ví dụ: Mua giày, Đi Đà Lạt)</label>
+                <input 
+                  type="text" 
+                  value={aiGoalName} 
+                  onChange={e => setAiGoalName(e.target.value)} 
+                  placeholder="Để trống nếu không có..."
+                />
+              </div>
+              <div className="form-group">
+                <label>Số tiền muốn để dành (VND)</label>
+                <input 
+                  type="text" 
+                  value={aiGoalAmount} 
+                  onChange={e => setAiGoalAmount(formatNum(e.target.value.replace(/\D/g, '')))} 
+                  placeholder="Ví dụ: 2.000.000"
+                />
+              </div>
+              <div className="modal-actions">
+                <button type="button" className="btn-secondary" onClick={() => setShowAiModal(false)} disabled={isAiLoading}>Hủy</button>
+                <button type="submit" className="btn-primary" disabled={isAiLoading}>
+                  {isAiLoading ? 'AI Đang tính toán...' : 'Lập bảng chi tiêu'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

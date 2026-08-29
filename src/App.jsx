@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
-import { ThemeProvider } from './context/ThemeContext';
+import { ThemeProvider, useTheme } from './context/ThemeContext';
 import VortexOverlay from './components/VortexOverlay';
 import LoadingScreen from './components/LoadingScreen';
 import Home from './pages/Home';
@@ -12,9 +12,11 @@ import SetupBudget from './pages/SetupBudget';
 import Settings from './pages/Settings';
 import Profile from './pages/Profile';
 import History from './pages/History';
+import Goals from './pages/Goals';
 import Success from './pages/Success';
 import TransactionDetail from './pages/TransactionDetail';
 import Statistics from './pages/Statistics';
+import AiChat from './pages/AiChat';
 import './index.css';
 
 const ProtectedRoute = ({ children }) => {
@@ -29,11 +31,31 @@ const ProtectedRoute = ({ children }) => {
 
 const AppRoutes = () => {
   const { user, loading } = useAuth();
+  const { customBg, theme } = useTheme();
 
   if (loading) return <LoadingScreen />;
 
   return (
-    <Routes>
+    <>
+      {/* Background Image Layer */}
+      {customBg && (
+        <div style={{
+          position: 'fixed',
+          top: 0, 
+          left: '50%',
+          transform: 'translateX(-50%)',
+          width: '100%',
+          maxWidth: '480px',
+          height: '100vh',
+          backgroundImage: `url(${customBg})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          opacity: theme === 'dark' ? 0.15 : 0.08,
+          zIndex: -1,
+          pointerEvents: 'none'
+        }} />
+      )}
+      <Routes>
       <Route path="/login" element={user ? <Navigate to="/" replace /> : <Login />} />
       <Route path="/terms" element={<Terms />} />
       <Route 
@@ -41,6 +63,30 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute>
             <Home />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/history" 
+        element={
+          <ProtectedRoute>
+            <History />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/goals" 
+        element={
+          <ProtectedRoute>
+            <Goals />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/ai-chat" 
+        element={
+          <ProtectedRoute>
+            <AiChat />
           </ProtectedRoute>
         } 
       />
@@ -68,6 +114,7 @@ const AppRoutes = () => {
       <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
       <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
     </Routes>
+    </>
   );
 };
 

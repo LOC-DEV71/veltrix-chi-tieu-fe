@@ -3,7 +3,24 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import BottomNav from '../components/BottomNav';
 import LoadingScreen from '../components/LoadingScreen';
-import { Settings, AlertCircle, PieChart, Sparkles, User, LogOut, X, Edit2 } from 'lucide-react';
+import { 
+  Plus, 
+  ArrowUpRight, 
+  ArrowDownRight, 
+  MoreHorizontal, 
+  BrainCircuit, 
+  TrendingUp, 
+  User, 
+  LogOut,
+  Target,
+  Edit2,
+  Settings,
+  AlertCircle,
+  PieChart,
+  Sparkles,
+  X,
+  Flag
+} from 'lucide-react';
 import api from '../services/api';
 import './Home.css';
 
@@ -12,6 +29,7 @@ const Home = () => {
   const navigate = useNavigate();
   const [budget, setBudget] = useState(null);
   const [categories, setCategories] = useState([]);
+  const [topGoal, setTopGoal] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showAvatarMenu, setShowAvatarMenu] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
@@ -40,17 +58,23 @@ const Home = () => {
 
       const currentBudget = budgetRes.data;
 
-      // 2. Get categories
-      const categoriesRes = await api.get(`/categories?budgetId=${currentBudget._id}`);
-      let fetchedCategories = categoriesRes.data;
+      // 2 & 3 & 4. Dùng luôn dữ liệu nếu Backend đã gộp sẵn
+      let fetchedCategories = currentBudget.categories;
+      let transactions = currentBudget.transactions;
+      let goals = currentBudget.goals || [];
 
-      // 3. Get transactions to calculate spent
-      const txRes = await api.get(`/transactions?budgetId=${currentBudget._id}`);
-      const transactions = txRes.data;
+      if (!fetchedCategories || !transactions) {
+        const [categoriesRes, txRes] = await Promise.all([
+          api.get(`/categories?budgetId=${currentBudget._id}`),
+          api.get(`/transactions?budgetId=${currentBudget._id}`)
+        ]);
+        fetchedCategories = categoriesRes.data;
+        transactions = txRes.data;
+      }
 
       // Calculate spent per category and total spent
       let totalSpent = 0;
-      fetchedCategories = fetchedCategories.map(cat => {
+      const catStats = fetchedCategories.map(cat => {
         const spent = transactions
           .filter(tx => tx.categoryId && (tx.categoryId._id === cat._id || tx.categoryId === cat._id))
           .reduce((sum, tx) => sum + tx.amount, 0);
@@ -64,7 +88,13 @@ const Home = () => {
         remaining: currentBudget.totalMoney - totalSpent,
         _id: currentBudget._id
       });
-      setCategories(fetchedCategories);
+      setCategories(catStats);
+
+      if (goals.length > 0) {
+        setTopGoal(goals[0]);
+      } else {
+        setTopGoal(null);
+      }
     } catch (err) {
       console.error("Lỗi khi tải dữ liệu", err);
     } finally {
@@ -75,22 +105,6 @@ const Home = () => {
   useEffect(() => {
     fetchData();
   }, []);
-
-  if (loading) {
-    return (
-      <div className="home-container" style={{ paddingTop: '60px' }}>
-        <div style={{ padding: '20px', animation: 'pulse 1.5s ease-in-out infinite' }}>
-          <div style={{ height: '24px', background: 'var(--skeleton-base)', borderRadius: '8px', width: '60%', marginBottom: '8px' }} />
-          <div style={{ height: '16px', background: 'var(--skeleton-shine)', borderRadius: '8px', width: '40%', marginBottom: '30px' }} />
-          <div style={{ height: '140px', background: 'var(--skeleton-base)', borderRadius: '20px', marginBottom: '24px' }} />
-          <div style={{ height: '20px', background: 'var(--skeleton-base)', borderRadius: '8px', width: '50%', marginBottom: '16px' }} />
-          {[1,2,3].map(i => (
-            <div key={i} style={{ height: '80px', background: 'var(--skeleton-shine)', borderRadius: '16px', marginBottom: '12px' }} />
-          ))}
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="home-container" style={{ position: 'relative', overflow: 'hidden' }}>
@@ -140,7 +154,17 @@ const Home = () => {
                 }}
               >
                 <User size={16} />
-                Tôi
+                Hồ sơ
+              </button>
+              <button 
+                className="home-avatar-menu-item"
+                onClick={() => {
+                  setShowAvatarMenu(false);
+                  navigate('/settings');
+                }}
+              >
+                <Settings size={16} />
+                Cài đặt
               </button>
               <button 
                 className="home-avatar-menu-item logout"
@@ -158,8 +182,18 @@ const Home = () => {
         </div>
       </div>
 
-      {/* Hero Card */}
-      <div className="home-hero-card" style={{ position: 'relative', zIndex: 1 }}>
+      {loading ? (
+        <div style={{ padding: '20px', animation: 'pulse 1.5s ease-in-out infinite' }}>
+          <div style={{ height: '140px', background: 'var(--skeleton-base)', borderRadius: '20px', marginBottom: '24px' }} />
+          <div style={{ height: '20px', background: 'var(--skeleton-base)', borderRadius: '8px', width: '50%', marginBottom: '16px' }} />
+          {[1,2,3].map(i => (
+            <div key={i} style={{ height: '80px', background: 'var(--skeleton-shine)', borderRadius: '16px', marginBottom: '12px' }} />
+          ))}
+        </div>
+      ) : (
+        <>
+          {/* Hero Card */}
+          <div className="home-hero-card" style={{ position: 'relative', zIndex: 1 }}>
         <div className="home-balance-label">
           <span>{budget ? 'Còn lại trong tháng' : 'Ngân sách tháng này'}</span>
           {budget && (
@@ -175,7 +209,35 @@ const Home = () => {
         <h2 className="home-balance-amount">
           {budget ? budget.remaining.toLocaleString() + 'đ' : 'Chưa thiết lập'}
         </h2>
-      </div>
+        </div>
+
+        {/* Goal Widget */}
+        {topGoal && (
+          <div className="home-goal-widget" onClick={() => navigate('/goals')}>
+            <div className="home-goal-widget-header">
+              <span style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', fontWeight: '600', color: 'var(--text-secondary)'}}>
+                <Flag size={14} color="var(--accent-primary)"/> Mục tiêu ưu tiên
+              </span>
+              <span style={{ fontSize: '12px', color: 'var(--text-tertiary)' }}>Hạn: {topGoal.deadline}</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+              <span style={{ fontWeight: '600' }}>{topGoal.name}</span>
+              <span style={{ color: 'var(--accent-primary)', fontWeight: '600' }}>
+                {Math.min(100, Math.round((topGoal.savedAmount / topGoal.targetAmount) * 100))}%
+              </span>
+            </div>
+            <div className="goal-progress-bar" style={{ height: '6px', marginBottom: '4px' }}>
+              <div 
+                className="goal-progress-fill" 
+                style={{ width: `${Math.min(100, Math.round((topGoal.savedAmount / topGoal.targetAmount) * 100))}%` }}
+              ></div>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: 'var(--text-secondary)' }}>
+              <span>Đã có: {topGoal.savedAmount.toLocaleString()}đ</span>
+              <span>Cần: {topGoal.targetAmount.toLocaleString()}đ</span>
+            </div>
+          </div>
+        )}
 
       {/* Categories */}
       <div style={{ marginBottom: '24px', position: 'relative', zIndex: 1 }}>
@@ -244,7 +306,7 @@ const Home = () => {
           </div>
         </div>
         
-        <div className="home-feature-card" onClick={() => alert('Tính năng AI phân tích đang được phát triển!')}>
+        <div className="home-feature-card" onClick={() => navigate('/ai-chat')}>
           <div className="home-feature-icon ai">
             <Sparkles size={24} strokeWidth={2.5} />
           </div>
@@ -254,6 +316,8 @@ const Home = () => {
           </div>
         </div>
       </div>
+      </>
+    )}
 
       <BottomNav />
 

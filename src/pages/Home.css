@@ -4,7 +4,7 @@
   min-height: 100vh;
   padding: 20px;
   padding-bottom: 100px;
-  background: var(--bg-primary);
+  background: transparent;
   color: var(--text-primary);
   position: relative;
   overflow-x: hidden;
@@ -247,6 +247,29 @@
   align-items: center;
   justify-content: center;
   margin-bottom: 4px;
+}
+
+.home-goal-widget {
+  background: var(--surface-light);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  padding: 16px;
+  margin-top: 16px;
+  cursor: pointer;
+  transition: var(--transition);
+  position: relative;
+  z-index: 1;
+}
+
+.home-goal-widget:hover {
+  border-color: var(--accent-primary);
+  transform: translateY(-2px);
+}
+
+.home-goal-widget-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
 }
 
 .home-feature-icon.analytics {

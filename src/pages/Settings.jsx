@@ -3,14 +3,16 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import BottomNav from '../components/BottomNav';
-import { User, Palette, Globe, Info, LogOut, ChevronRight, Calendar, Moon, Sun } from 'lucide-react';
+import { User, Palette, Globe, Info, LogOut, ChevronRight, Calendar, Moon, Sun, X, Loader2, Image as ImageIcon } from 'lucide-react';
 import Swal from 'sweetalert2';
+import api from '../services/api';
 import './Settings.css';
 
 const Settings = () => {
   const { user, logout } = useAuth();
-  const { theme, toggleTheme, isAnimating } = useTheme();
+  const { theme, toggleTheme, isAnimating, customBg, updateCustomBg } = useTheme();
   const navigate = useNavigate();
+  const [isUploadingBg, setIsUploadingBg] = React.useState(false);
 
   const handleLogout = async () => {
     const result = await Swal.fire({
@@ -47,6 +49,25 @@ const Settings = () => {
         popup: 'glass-panel'
       }
     });
+  };
+
+  const handleBgChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    try {
+      setIsUploadingBg(true);
+      const formData = new FormData();
+      formData.append('image', file);
+      const uploadRes = await api.post('/uploads/receipt', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      updateCustomBg(uploadRes.data.url);
+    } catch (err) {
+      Swal.fire('Lỗi', 'Không thể tải ảnh lên', 'error');
+    } finally {
+      setIsUploadingBg(false);
+    }
   };
 
   return (
@@ -108,6 +129,41 @@ const Settings = () => {
             <div className="settings-value">
               <span>{theme === 'dark' ? 'Tối (Dark)' : 'Sáng (Light)'}</span>
               <ChevronRight size={18} className="settings-arrow" />
+            </div>
+          </div>
+
+          <div className="settings-row">
+            <div className="settings-row-left">
+              <div className="settings-icon-wrapper" style={{ background: 'linear-gradient(135deg, #a855f7, #ec4899)' }}>
+                <ImageIcon size={20} color="#fff" />
+              </div>
+              <span className="settings-label">Hình nền mờ</span>
+            </div>
+            <div className="settings-value" style={{ display: 'flex', alignItems: 'center' }}>
+              {isUploadingBg ? (
+                <Loader2 size={18} className="animate-spin" style={{ color: 'var(--text-secondary)' }} />
+              ) : (
+                <>
+                  <label style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
+                    <span style={{ fontSize: '13px', color: 'var(--text-tertiary)' }}>{customBg ? 'Đã đổi' : 'Mặc định'}</span>
+                    <input 
+                      type="file" 
+                      accept="image/*" 
+                      onChange={handleBgChange}
+                      style={{ display: 'none' }}
+                    />
+                  </label>
+                  {customBg && (
+                    <button 
+                      onClick={(e) => { e.stopPropagation(); updateCustomBg(null); }}
+                      style={{ background: 'none', border: 'none', padding: '4px', cursor: 'pointer', marginLeft: '8px', color: 'var(--accent-danger)' }}
+                      title="Xóa hình nền"
+                    >
+                      <X size={16} />
+                    </button>
+                  )}
+                </>
+              )}
             </div>
           </div>
 

@@ -4,9 +4,20 @@ const ThemeContext = createContext();
 
 export const ThemeProvider = ({ children }) => {
   const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'dark');
+  const [customBg, setCustomBg] = useState(() => localStorage.getItem('customBg') || null);
   const [isAnimating, setIsAnimating] = useState(false);
   const [animPhase, setAnimPhase] = useState('idle'); // 'idle' | 'vortex' | 'expand'
   const timerRef = useRef(null);
+
+  const updateCustomBg = (url) => {
+    if (url) {
+      setCustomBg(url);
+      localStorage.setItem('customBg', url);
+    } else {
+      setCustomBg(null);
+      localStorage.removeItem('customBg');
+    }
+  };
 
   const toggleTheme = useCallback(() => {
     if (isAnimating) return;
@@ -35,7 +46,7 @@ export const ThemeProvider = ({ children }) => {
   }, []);
 
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme, isAnimating, animPhase }}>
+    <ThemeContext.Provider value={{ theme, toggleTheme, isAnimating, animPhase, customBg, updateCustomBg }}>
       {children}
     </ThemeContext.Provider>
   );

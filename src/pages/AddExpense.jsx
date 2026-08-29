@@ -26,15 +26,15 @@ const AddExpense = () => {
           throw err;
         });
         
-        if (!budgetRes || !budgetRes.data) {
-          return; // No budget found
+        if (budgetRes && budgetRes.data) {
+          setBudgetId(budgetRes.data._id);
+          if (budgetRes.data.categories) {
+            setCategories(budgetRes.data.categories);
+          } else {
+            const catRes = await api.get(`/categories?budgetId=${budgetRes.data._id}`);
+            setCategories(catRes.data);
+          }
         }
-        
-        const budget = budgetRes.data;
-        setBudgetId(budget._id);
-        
-        const catRes = await api.get(`/categories?budgetId=${budget._id}`);
-        setCategories(catRes.data);
       } catch (err) {
         console.error('Failed to fetch budget or categories', err);
       } finally {
@@ -124,6 +124,58 @@ const AddExpense = () => {
       navigate('/success', { state: { transaction: transactionData } });
     } catch (error) {
       console.error(error);
+      
+      // Xử lý khi bị AI chặn
+      if (error.response?.status === 403 && error.response?.data?.blockedByAI) {
+        // Bật hiệu ứng chớp đỏ
+        document.body.classList.add('screen-blink-warning');
+        setTimeout(() => document.body.classList.remove('screen-blink-warning'), 2500);
+
+        Swal.fire({
+          title: '⚠️ Cảnh báo từ AI!',
+          text: error.response.data.message,
+          imageUrl: 'https://cdn-icons-png.flaticon.com/512/4712/4712010.png',
+          imageWidth: 80,
+          imageHeight: 80,
+          showCancelButton: true,
+          showDenyButton: true,
+          confirmButtonText: 'Đến trang Chat',
+          denyButtonText: 'Tiếp tục chi',
+          cancelButtonText: 'Hủy',
+          background: 'var(--bg-secondary)',
+          color: 'var(--text-primary)',
+          confirmButtonColor: 'var(--accent-primary)',
+          denyButtonColor: 'var(--accent-danger)',
+          customClass: {
+            popup: 'glass-panel'
+          }
+        }).then(async (result) => {
+          if (result.isConfirmed) {
+            navigate('/ai-chat');
+          } else if (result.isDenied) {
+            // Force save
+            setIsSubmitting(true);
+            try {
+              const numAmount = parseInt(amount.replace(/\./g, ''), 10);
+              const txRes = await api.post('/transactions', {
+                budgetId,
+                categoryId,
+                amount: numAmount,
+                note,
+                force: true
+              });
+              const selectedCategory = categories.find(c => c._id === categoryId);
+              navigate('/success', { state: { transaction: { ...txRes.data, category: selectedCategory } } });
+            } catch (forceErr) {
+              Swal.fire('Lỗi', 'Không thể thêm chi tiêu', 'error');
+            } finally {
+              setIsSubmitting(false);
+            }
+          }
+        });
+        return; // Dừng luồng xử lý lỗi mặc định
+      }
+
       const errorMsg = error.response?.data?.message || error.message;
       Swal.fire({
         icon: 'error',

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Home, PieChart, FileText, Settings, Plus } from 'lucide-react';
+import { Home, PieChart, FileText, Settings, Plus, Target } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 const BottomNav = () => {
@@ -38,10 +38,13 @@ const BottomNav = () => {
           onClick={() => navigate('/history')} 
         />
         <NavItem 
-          icon={<Settings size={24} />} 
-          active={isActive('/settings')} 
-          onClick={() => navigate('/settings')} 
+          icon={<Target size={24} />} 
+          active={isActive('/goals')} 
+          onClick={() => navigate('/goals')} 
         />
+        
+        {/* Walking GIF */}
+        <img src="/di-bo-cute.gif" alt="walking character" className="walking-gif" />
       </div>
     </>
   );

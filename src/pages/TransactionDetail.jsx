@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { ArrowLeft, Download, FileText, CheckCircle2, Loader2 } from 'lucide-react';
+import { ArrowLeft, Download, FileText, CheckCircle2, Loader2, X } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import './Success.css';
 
@@ -110,7 +110,7 @@ const TransactionDetail = () => {
           <div className="success-amount">-{formatCurrency(transaction.amount)}đ</div>
         </div>
 
-        <div className="success-card" style={{ zIndex: 1, position: 'relative', margin: '0 auto', opacity: 1, animation: 'none', transform: 'none', backgroundColor: '#18181b' }}>
+        <div className="success-card" style={{ zIndex: 1, position: 'relative', margin: '0 auto', opacity: 1, animation: 'none', transform: 'none' }}>
         <div className="success-row">
           <span className="success-label">Thời gian thanh toán</span>
           <span className="success-value">{formatDate(transaction.createdAt)}</span>

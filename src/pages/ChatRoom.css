@@ -1,19 +1,22 @@
 .chatroom-container {
   height: 100vh;
+  height: 100dvh;
   display: flex;
   flex-direction: column;
   background-color: var(--bg-primary);
   color: var(--text-primary);
+  overflow: hidden;
 }
 
 .chatroom-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 15px 20px;
+  padding: calc(12px + env(safe-area-inset-top)) 20px 12px;
   border-bottom: 1px solid var(--border-color);
   background-color: var(--bg-primary);
   z-index: 10;
+  flex-shrink: 0;
 }
 
 .chatroom-friend-info {
@@ -54,6 +57,7 @@
   display: flex;
   flex-direction: column;
   gap: 15px;
+  -webkit-overflow-scrolling: touch;
 }
 
 .message-wrapper {
@@ -122,9 +126,10 @@
 .chatroom-input-area {
   display: flex;
   align-items: center;
-  padding: 15px 20px;
+  padding: 12px 20px calc(12px + env(safe-area-inset-bottom));
   background-color: var(--bg-primary);
   border-top: 1px solid var(--border-color);
+  flex-shrink: 0;
 }
 
 .chatroom-input-area input {

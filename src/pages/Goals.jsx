@@ -198,7 +198,7 @@ const Goals = () => {
             return (
               <div 
                 key={goal._id} 
-                className={`goal-card ${goal.status === 'completed' ? 'completed' : ''}`}
+                className={`goal-card ${goal.status === 'completed' ? 'completed' : ''} ${goal.image ? 'has-image' : ''}`}
                 style={goal.image ? { 
                   backgroundImage: `linear-gradient(rgba(17, 19, 21, 0.75), rgba(17, 19, 21, 0.95)), url(${goal.image})`, 
                   backgroundSize: 'cover', 

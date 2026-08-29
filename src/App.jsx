@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { SocketProvider } from './context/SocketContext';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
 import VortexOverlay from './components/VortexOverlay';
 import LoadingScreen from './components/LoadingScreen';
@@ -14,9 +15,14 @@ import Profile from './pages/Profile';
 import History from './pages/History';
 import Goals from './pages/Goals';
 import Success from './pages/Success';
+import Feed from './pages/Feed';
+import AddFriend from './pages/AddFriend';
 import TransactionDetail from './pages/TransactionDetail';
 import Statistics from './pages/Statistics';
 import AiChat from './pages/AiChat';
+import ChatList from './pages/ChatList';
+import ChatRoom from './pages/ChatRoom';
+import PushNotificationManager from './components/PushNotificationManager';
 import './index.css';
 
 const ProtectedRoute = ({ children }) => {
@@ -55,9 +61,18 @@ const AppRoutes = () => {
           pointerEvents: 'none'
         }} />
       )}
+      <PushNotificationManager user={user} />
       <Routes>
       <Route path="/login" element={user ? <Navigate to="/" replace /> : <Login />} />
       <Route path="/terms" element={<Terms />} />
+      
+      {/* Friend Share Link Route (requires login to accept, but can be viewed) */}
+      <Route path="/add-friend/:id" element={
+        <ProtectedRoute>
+          <AddFriend />
+        </ProtectedRoute>
+      } />
+      
       <Route 
         path="/" 
         element={
@@ -106,9 +121,19 @@ const AppRoutes = () => {
           </ProtectedRoute>
         } 
       />
+      <Route 
+        path="/feed" 
+        element={
+          <ProtectedRoute>
+            <Feed />
+          </ProtectedRoute>
+        } 
+      />
       {/* Placeholder routes */}
       <Route path="/statistics" element={<ProtectedRoute><Statistics /></ProtectedRoute>} />
-      <Route path="/history" element={<ProtectedRoute><History /></ProtectedRoute>} />
+      <Route path="/ai-chat" element={<ProtectedRoute><AiChat /></ProtectedRoute>} />
+      <Route path="/messages" element={<ProtectedRoute><ChatList /></ProtectedRoute>} />
+      <Route path="/chat/:friendId" element={<ProtectedRoute><ChatRoom /></ProtectedRoute>} />
       <Route path="/transaction/:id" element={<ProtectedRoute><TransactionDetail /></ProtectedRoute>} />
       <Route path="/success" element={<ProtectedRoute><Success /></ProtectedRoute>} />
       <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
@@ -122,10 +147,12 @@ const App = () => {
   return (
     <ThemeProvider>
       <AuthProvider>
-        <Router>
-          <VortexOverlay />
-          <AppRoutes />
-        </Router>
+        <SocketProvider>
+          <Router>
+            <VortexOverlay />
+            <AppRoutes />
+          </Router>
+        </SocketProvider>
       </AuthProvider>
     </ThemeProvider>
   );

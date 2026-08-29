@@ -19,7 +19,8 @@ import {
   PieChart,
   Sparkles,
   X,
-  Flag
+  Flag,
+  Globe
 } from 'lucide-react';
 import api from '../services/api';
 import './Home.css';
@@ -30,6 +31,7 @@ const Home = () => {
   const [budget, setBudget] = useState(null);
   const [categories, setCategories] = useState([]);
   const [topGoal, setTopGoal] = useState(null);
+  const [unreadFeedCount, setUnreadFeedCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [showAvatarMenu, setShowAvatarMenu] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
@@ -64,12 +66,30 @@ const Home = () => {
       let goals = currentBudget.goals || [];
 
       if (!fetchedCategories || !transactions) {
-        const [categoriesRes, txRes] = await Promise.all([
+        const [categoriesRes, txRes, unreadRes, msgUnreadRes] = await Promise.all([
           api.get(`/categories?budgetId=${currentBudget._id}`),
-          api.get(`/transactions?budgetId=${currentBudget._id}`)
+          api.get(`/transactions?budgetId=${currentBudget._id}`),
+          api.get('/transactions/feed/unread-count'),
+          api.get('/messages/unread-count')
         ]);
         fetchedCategories = categoriesRes.data;
         transactions = txRes.data;
+        
+        let totalUnread = 0;
+        if (unreadRes && unreadRes.data) totalUnread += unreadRes.data.count || 0;
+        if (msgUnreadRes && msgUnreadRes.data) totalUnread += msgUnreadRes.data.count || 0;
+        setUnreadFeedCount(totalUnread);
+      } else {
+        // If data is already there, we just need to fetch unread count separately
+        const [unreadRes, msgUnreadRes] = await Promise.all([
+          api.get('/transactions/feed/unread-count'),
+          api.get('/messages/unread-count')
+        ]);
+        
+        let totalUnread = 0;
+        if (unreadRes && unreadRes.data) totalUnread += unreadRes.data.count || 0;
+        if (msgUnreadRes && msgUnreadRes.data) totalUnread += msgUnreadRes.data.count || 0;
+        setUnreadFeedCount(totalUnread);
       }
 
       // Calculate spent per category and total spent
@@ -313,6 +333,21 @@ const Home = () => {
           <div>
             <div className="home-feature-title">Trợ lý AI</div>
             <div className="home-feature-desc">Phân tích thông minh</div>
+          </div>
+        </div>
+
+        <div className="home-feature-card" onClick={() => navigate('/feed')}>
+          <div className="home-feature-icon" style={{ background: 'rgba(59, 130, 246, 0.1)', color: '#3b82f6', position: 'relative' }}>
+            <Globe size={24} strokeWidth={2.5} />
+            {unreadFeedCount > 0 && (
+              <div style={{ position: 'absolute', top: '-4px', right: '-4px', minWidth: '18px', height: '18px', padding: '0 4px', backgroundColor: 'var(--accent-danger)', color: '#fff', fontSize: '11px', fontWeight: 'bold', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '10px', border: '2px solid var(--bg-glass)' }}>
+                {unreadFeedCount > 99 ? '99+' : unreadFeedCount}
+              </div>
+            )}
+          </div>
+          <div>
+            <div className="home-feature-title">Cộng đồng</div>
+            <div className="home-feature-desc">Feed khoảnh khắc</div>
           </div>
         </div>
       </div>

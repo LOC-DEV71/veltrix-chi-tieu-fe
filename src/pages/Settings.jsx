@@ -10,7 +10,7 @@ import './Settings.css';
 
 const Settings = () => {
   const { user, logout } = useAuth();
-  const { theme, toggleTheme, isAnimating, customBg, updateCustomBg } = useTheme();
+  const { theme, toggleTheme, isAnimating, customBg, updateCustomBg, triggerBgAnimation, finishBgAnimation, cancelBgAnimation } = useTheme();
   const navigate = useNavigate();
   const [isUploadingBg, setIsUploadingBg] = React.useState(false);
 
@@ -57,14 +57,17 @@ const Settings = () => {
 
     try {
       setIsUploadingBg(true);
+      triggerBgAnimation();
       const formData = new FormData();
       formData.append('image', file);
       const uploadRes = await api.post('/uploads/receipt', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       updateCustomBg(uploadRes.data.url);
+      finishBgAnimation();
     } catch (err) {
       Swal.fire('Lỗi', 'Không thể tải ảnh lên', 'error');
+      cancelBgAnimation();
     } finally {
       setIsUploadingBg(false);
     }

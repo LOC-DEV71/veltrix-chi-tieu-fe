@@ -31,6 +31,43 @@ const VortexOverlay = () => {
       {animPhase === 'expand' && (
         <div className="vortex-expand-burst" />
       )}
+      
+      {/* ─── BG LOADING (Magic Dust) ─── */}
+      {animPhase === 'bg-loading' && (
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <div className="magic-dust-container">
+            <div className="magic-dust" />
+            <div className="magic-dust" />
+            <div className="magic-dust" />
+            <div className="magic-core" />
+          </div>
+          <div className="magic-loading-text">
+            {"Đang thiết lập...".split("").map((char, index) => (
+              <span key={index} style={{ '--delay': `${index * 0.1}s` }}>
+                {char === ' ' ? '\u00A0' : char}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ─── BG EXPAND (Shards & Shockwave) ─── */}
+      {animPhase === 'bg-expand' && (
+        <div className="magic-expand-burst">
+          <div className="magic-flash" />
+          <div className="magic-shockwave" />
+          <div className="magic-shockwave delay-1" />
+          <div className="magic-shards-container">
+            {[...Array(24)].map((_, i) => (
+              <div 
+                key={i} 
+                className={`magic-shard ${i % 2 === 0 ? 'large' : 'small'}`} 
+                style={{ '--angle': `${i * 15}deg` }} 
+              />
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

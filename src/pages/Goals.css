@@ -206,6 +206,36 @@
   color: var(--accent-primary);
 }
 
+.goal-card.has-image {
+  color: #fff;
+}
+
+.goal-card.has-image .goal-title h3,
+.goal-card.has-image .goal-amount-item strong {
+  color: #fff;
+}
+
+.goal-card.has-image .goal-amount-item span,
+.goal-card.has-image .goal-deadline {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.goal-card.has-image .goal-delete {
+  background: rgba(239, 68, 68, 0.15);
+  color: #fca5a5;
+}
+
+.goal-card.has-image .goal-deposit-btn {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: #fff;
+}
+
+.goal-card.has-image .goal-deposit-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: #fff;
+}
+
 .modal-subtitle {
   color: var(--text-secondary);
   font-size: 14px;

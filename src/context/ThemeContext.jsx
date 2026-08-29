@@ -40,13 +40,28 @@ export const ThemeProvider = ({ children }) => {
     }, 1500);
   }, [theme, isAnimating]);
 
+  const triggerBgAnimation = useCallback(() => {
+    setAnimPhase('bg-loading');
+  }, []);
+
+  const finishBgAnimation = useCallback(() => {
+    setAnimPhase('bg-expand');
+    timerRef.current = setTimeout(() => {
+      setAnimPhase('idle');
+    }, 800);
+  }, []);
+
+  const cancelBgAnimation = useCallback(() => {
+    setAnimPhase('idle');
+  }, []);
+
   // Apply saved theme on mount
   React.useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
   }, []);
 
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme, isAnimating, animPhase, customBg, updateCustomBg }}>
+    <ThemeContext.Provider value={{ theme, toggleTheme, isAnimating, animPhase, customBg, updateCustomBg, triggerBgAnimation, finishBgAnimation, cancelBgAnimation }}>
       {children}
     </ThemeContext.Provider>
   );

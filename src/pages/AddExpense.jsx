@@ -13,6 +13,7 @@ const AddExpense = () => {
   const [receiptFile, setReceiptFile] = useState(null);
   const [receiptPreview, setReceiptPreview] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isPublic, setIsPublic] = useState(false);
 
   const [categories, setCategories] = useState([]);
   const [budgetId, setBudgetId] = useState(null);
@@ -110,7 +111,8 @@ const AddExpense = () => {
         categoryId,
         amount: numAmount,
         note,
-        receipt: receiptData
+        receipt: receiptData,
+        isPublic
       });
       
       // Get the full category object to display in Success page
@@ -162,6 +164,7 @@ const AddExpense = () => {
                 categoryId,
                 amount: numAmount,
                 note,
+                isPublic,
                 force: true
               });
               const selectedCategory = categories.find(c => c._id === categoryId);
@@ -293,6 +296,48 @@ const AddExpense = () => {
                   />
                 </>
               )}
+            </div>
+
+            {/* Share to Moments Switch */}
+            <div style={{
+              display: 'flex', 
+              justifyContent: 'space-between', 
+              alignItems: 'center', 
+              marginTop: '16px',
+              padding: '12px 16px',
+              background: 'var(--bg-glass)',
+              borderRadius: '12px',
+              border: '1px solid var(--border-color)'
+            }}>
+              <div>
+                <p style={{ margin: 0, fontSize: '15px', fontWeight: '500', color: 'var(--text-primary)' }}>Đăng lên Khoảnh khắc 🌍</p>
+                <p style={{ margin: 0, fontSize: '12px', color: 'var(--text-secondary)', marginTop: '4px' }}>Chia sẻ ảnh này với cộng đồng</p>
+              </div>
+              
+              <div 
+                onClick={() => setIsPublic(!isPublic)}
+                style={{
+                  width: '44px',
+                  height: '24px',
+                  background: isPublic ? 'var(--accent-primary)' : 'var(--border-color)',
+                  borderRadius: '12px',
+                  position: 'relative',
+                  cursor: 'pointer',
+                  transition: 'background 0.3s'
+                }}
+              >
+                <div style={{
+                  width: '20px',
+                  height: '20px',
+                  background: '#fff',
+                  boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                  borderRadius: '50%',
+                  position: 'absolute',
+                  top: '2px',
+                  left: isPublic ? '22px' : '2px',
+                  transition: 'left 0.3s'
+                }} />
+              </div>
             </div>
           </div>
 

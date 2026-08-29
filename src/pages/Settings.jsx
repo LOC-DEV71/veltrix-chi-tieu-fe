@@ -1,0 +1,168 @@
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import BottomNav from '../components/BottomNav';
+import { User, Palette, Globe, Info, LogOut, ChevronRight, Calendar } from 'lucide-react';
+import Swal from 'sweetalert2';
+import './Settings.css';
+
+const Settings = () => {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    const result = await Swal.fire({
+      title: 'Đăng xuất?',
+      text: 'Bạn có chắc chắn muốn đăng xuất không?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#ef4444',
+      cancelButtonColor: 'rgba(255, 255, 255, 0.1)',
+      confirmButtonText: 'Đăng xuất',
+      cancelButtonText: 'Hủy',
+      background: '#18181b',
+      color: '#fff',
+      customClass: {
+        popup: 'glass-panel'
+      }
+    });
+
+    if (result.isConfirmed) {
+      await logout();
+      navigate('/login');
+    }
+  };
+
+  const handlePlaceholderClick = (featureName) => {
+    Swal.fire({
+      icon: 'info',
+      title: 'Đang phát triển',
+      text: `Tính năng ${featureName} đang được xây dựng!`,
+      background: '#18181b',
+      color: '#fff',
+      confirmButtonColor: '#6366f1',
+      customClass: {
+        popup: 'glass-panel'
+      }
+    });
+  };
+
+  return (
+    <div className="settings-container">
+      {/* Dynamic Background Glow */}
+      <div 
+        style={{
+          position: 'absolute',
+          top: '-150px',
+          left: '-150px',
+          width: '500px',
+          height: '500px',
+          background: 'radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, rgba(99, 102, 241, 0) 70%)',
+          borderRadius: '50%',
+          filter: 'blur(60px)',
+          zIndex: 0,
+          pointerEvents: 'none',
+        }}
+      />
+
+      <div className="settings-header" style={{ position: 'relative', zIndex: 1 }}>
+        <h1 className="settings-title">Cài đặt</h1>
+      </div>
+
+      <div style={{ position: 'relative', zIndex: 1 }}>
+        {/* Account Group */}
+        <div className="settings-group">
+          <div className="settings-group-title">Tài khoản</div>
+          
+          <div className="settings-row" onClick={() => navigate('/profile')}>
+            <div className="settings-row-left">
+              <div className="settings-icon-wrapper blue">
+                <User size={20} />
+              </div>
+              <span className="settings-label">Hồ sơ của tôi</span>
+            </div>
+            <div className="settings-value">
+              <span>{user?.name || 'Người dùng'}</span>
+              <ChevronRight size={18} className="settings-arrow" />
+            </div>
+          </div>
+        </div>
+
+        {/* Preferences Group */}
+        <div className="settings-group">
+          <div className="settings-group-title">Tùy chỉnh</div>
+          
+          <div className="settings-row" onClick={() => handlePlaceholderClick('Đổi giao diện')}>
+            <div className="settings-row-left">
+              <div className="settings-icon-wrapper purple">
+                <Palette size={20} />
+              </div>
+              <span className="settings-label">Giao diện</span>
+            </div>
+            <div className="settings-value">
+              <span>Tối (Dark)</span>
+              <ChevronRight size={18} className="settings-arrow" />
+            </div>
+          </div>
+
+          <div className="settings-row" onClick={() => handlePlaceholderClick('Đổi ngôn ngữ')}>
+            <div className="settings-row-left">
+              <div className="settings-icon-wrapper green">
+                <Globe size={20} />
+              </div>
+              <span className="settings-label">Ngôn ngữ</span>
+            </div>
+            <div className="settings-value">
+              <span>Tiếng Việt</span>
+              <ChevronRight size={18} className="settings-arrow" />
+            </div>
+          </div>
+        </div>
+
+        {/* System Group */}
+        <div className="settings-group">
+          <div className="settings-group-title">Hệ thống</div>
+
+          {user?.createdAt && (
+            <div className="settings-row">
+              <div className="settings-row-left">
+                <div className="settings-icon-wrapper blue">
+                  <Calendar size={20} />
+                </div>
+                <span className="settings-label">Ngày tham gia</span>
+              </div>
+              <div className="settings-value">
+                <span>{new Date(user.createdAt).toLocaleDateString('vi-VN')}</span>
+              </div>
+            </div>
+          )}
+          
+          <div className="settings-row" onClick={() => handlePlaceholderClick('Thông tin phiên bản')}>
+            <div className="settings-row-left">
+              <div className="settings-icon-wrapper gray">
+                <Info size={20} />
+              </div>
+              <span className="settings-label">Phiên bản</span>
+            </div>
+            <div className="settings-value">
+              <span>v1.0.0</span>
+            </div>
+          </div>
+
+          <div className="settings-row" onClick={handleLogout}>
+            <div className="settings-row-left">
+              <div className="settings-icon-wrapper red">
+                <LogOut size={20} />
+              </div>
+              <span className="settings-label" style={{ color: 'var(--accent-danger)' }}>Đăng xuất</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <BottomNav />
+    </div>
+  );
+};
+
+export default Settings;

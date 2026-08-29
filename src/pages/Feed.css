@@ -1,6 +1,7 @@
 /* Feed.css */
 .feed-container {
   height: 100vh;
+  height: 100dvh;
   width: 100%;
   background: var(--bg-primary); /* Use global theme background */
   position: relative;
@@ -16,12 +17,11 @@
   transform: translateX(-50%);
   width: 100%;
   max-width: 480px;
-  height: 80px;
+  height: calc(80px + env(safe-area-inset-top));
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 20px;
-  padding-top: 20px;
+  padding: env(safe-area-inset-top) 20px 0;
   z-index: 100;
   background: linear-gradient(to bottom, var(--bg-primary) 0%, transparent 100%);
 }
@@ -95,9 +95,10 @@
 /* Scroll Area */
 .feed-scroll-area {
   height: 100vh;
+  height: 100dvh;
   overflow-y: scroll;
   scroll-snap-type: y mandatory;
-  padding-bottom: 120px;
+  padding-bottom: calc(120px + env(safe-area-inset-bottom));
 }
 
 .feed-scroll-area::-webkit-scrollbar {
@@ -113,7 +114,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding-top: calc(60px + env(safe-area-inset-top));
+  padding-top: calc(80px + env(safe-area-inset-top));
   padding-bottom: calc(140px + env(safe-area-inset-bottom));
   box-sizing: border-box;
 }
@@ -256,12 +257,14 @@
 /* Empty States */
 .feed-loading-state, .feed-empty-state {
   height: 100vh;
+  height: 100dvh;
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--text-secondary);
   text-align: center;
-  padding: 40px;
+  padding: calc(100px + env(safe-area-inset-top)) 40px calc(120px + env(safe-area-inset-bottom));
+  box-sizing: border-box;
 }
 
 /* Filter Modal */
@@ -277,7 +280,7 @@
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  padding-top: 100px; /* Below the header */
+  padding-top: calc(100px + env(safe-area-inset-top)); /* Below the header */
 }
 
 .locket-filter-modal {
@@ -456,12 +459,14 @@
 /* Empty States */
 .feed-loading-state, .feed-empty-state {
   height: 100vh;
+  height: 100dvh;
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--text-secondary);
   text-align: center;
-  padding: 40px;
+  padding: calc(100px + env(safe-area-inset-top)) 40px calc(120px + env(safe-area-inset-bottom));
+  box-sizing: border-box;
 }
 
 /* Filter Modal */
@@ -477,7 +482,7 @@
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  padding-top: 100px; /* Below the header */
+  padding-top: calc(100px + env(safe-area-inset-top)); /* Below the header */
 }
 
 .locket-filter-modal {

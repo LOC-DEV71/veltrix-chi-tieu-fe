@@ -1,12 +1,12 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { AuthContext } from '../context/AuthContext';
+import React, { useState, useEffect } from 'react';
+import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import './PinScreen.css';
 import { Lock, Delete, Fingerprint } from 'lucide-react';
 import Swal from 'sweetalert2';
 
 const PinScreen = () => {
-  const { user, setPinVerified, updateUser } = useContext(AuthContext);
+  const { user, setPinVerified, updateUser } = useAuth();
   const [pin, setPin] = useState('');
   const [confirmPin, setConfirmPin] = useState('');
   const [step, setStep] = useState(user?.hasPin ? 'verify' : 'setup-1');

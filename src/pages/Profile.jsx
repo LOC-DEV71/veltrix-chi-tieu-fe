@@ -232,6 +232,7 @@ const Profile = () => {
           {isSaving ? <Loader2 className="animate-spin" /> : 'Lưu thay đổi'}
         </button>
       </div>
+      </div>
 
       {showCropper && (
         <div style={{

@@ -309,10 +309,12 @@ const Settings = () => {
       {/* Advanced Settings Modal */}
       {showAdvancedModal && (
         <div style={{
-          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-          background: 'rgba(0,0,0,0.7)',
-          backdropFilter: 'blur(10px)',
-          WebkitBackdropFilter: 'blur(10px)',
+          position: 'fixed', top: 0, bottom: 0,
+          left: '50%', transform: 'translateX(-50%)',
+          width: '100%', maxWidth: '480px',
+          background: 'rgba(0,0,0,0.85)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
           display: 'flex', flexDirection: 'column',
           zIndex: 9999,
           padding: '24px 20px',

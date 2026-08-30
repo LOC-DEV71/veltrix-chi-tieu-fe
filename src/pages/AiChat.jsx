@@ -148,7 +148,7 @@ const AiChat = () => {
       // Dùng ResponsiveVoice - giọng nữ tiếng Việt, hoạt động trên iOS/Android
       // eslint-disable-next-line no-undef
       responsiveVoice.speak(cleanText, 'Vietnamese Female', {
-        rate: 1.5,
+        rate: 1.0,
         onstart: () => setIsAudioLoading(false),
         onend: () => setPlayingMsgId(null),
         onerror: () => setPlayingMsgId(null),

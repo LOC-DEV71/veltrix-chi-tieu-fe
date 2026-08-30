@@ -70,11 +70,11 @@ const AddFriend = () => {
           <>
             <h2>Yêu cầu kết bạn</h2>
             <div className="friend-profile">
-              <div style={{ position: 'relative', display: 'inline-block' }}>
+              <div style={{ position: 'relative', width: '100px', height: '100px', marginBottom: '16px' }}>
                 {friendUser.avatar ? (
-                  <img src={friendUser.avatar} alt={friendUser.name} className="large-avatar" />
+                  <img src={friendUser.avatar} alt={friendUser.name} className="large-avatar" style={{ margin: 0 }} />
                 ) : (
-                  <div className="large-avatar-placeholder">{friendUser.name.charAt(0)}</div>
+                  <div className="large-avatar-placeholder" style={{ margin: 0 }}>{friendUser.name.charAt(0)}</div>
                 )}
                 {friendUser.avatarFrame && (
                   <img 

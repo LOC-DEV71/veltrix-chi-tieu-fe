@@ -273,7 +273,7 @@ const FriendsModal = ({ onClose }) => {
               ) : (
                 friends.map(f => (
                   <div key={f._id} className="friend-item">
-                    <div style={{ position: 'relative', display: 'flex' }}>
+                    <div style={{ position: 'relative', width: '44px', height: '44px', flexShrink: 0 }}>
                       {f.avatar ? (
                         <img src={f.avatar} alt="Avatar" className="f-avatar" />
                       ) : (
@@ -323,7 +323,7 @@ const FriendsModal = ({ onClose }) => {
               <div className="search-results">
                 {!loading && searchResults.map(u => (
                   <div key={u._id} className="friend-item">
-                    <div style={{ position: 'relative', display: 'flex' }}>
+                    <div style={{ position: 'relative', width: '44px', height: '44px', flexShrink: 0 }}>
                       {u.avatar ? (
                         <img src={u.avatar} alt="Avatar" className="f-avatar" />
                       ) : (
@@ -352,7 +352,7 @@ const FriendsModal = ({ onClose }) => {
               ) : (
                 requests.map(req => (
                   <div key={req._id} className="friend-item">
-                    <div style={{ position: 'relative', display: 'flex' }}>
+                    <div style={{ position: 'relative', width: '44px', height: '44px', flexShrink: 0 }}>
                       {req.sender?.avatar ? (
                         <img src={req.sender.avatar} alt="Avatar" className="f-avatar" />
                       ) : (

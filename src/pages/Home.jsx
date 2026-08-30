@@ -382,11 +382,27 @@ const Home = () => {
               </button>
             </div>
             <div className="home-modal-body">
-              <img 
-                src={user?.avatar || 'https://ui-avatars.com/api/?name=' + (user?.name || 'U') + '&background=6366f1&color=fff'} 
-                alt="Avatar" 
-                className="home-modal-avatar" 
-              />
+              <div style={{ position: 'relative', width: '80px', height: '80px' }}>
+                <img 
+                  src={user?.avatar || 'https://ui-avatars.com/api/?name=' + (user?.name || 'U') + '&background=6366f1&color=fff'} 
+                  alt="Avatar" 
+                  className="home-modal-avatar" 
+                  style={{ margin: 0 }}
+                />
+                {user?.avatarFrame && (
+                  <img 
+                    src={`/${user.avatarFrame}`} 
+                    alt="frame" 
+                    style={{
+                      position: 'absolute',
+                      top: '-20%', left: '-20%',
+                      width: '140%', height: '140%',
+                      pointerEvents: 'none',
+                      zIndex: 2
+                    }}
+                  />
+                )}
+              </div>
               <div className="home-modal-info">
                 <div className="home-modal-name">{user?.name || 'Người dùng'}</div>
                 <div className="home-modal-email">{user?.email || 'Chưa cập nhật email'}</div>

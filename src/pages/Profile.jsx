@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
-import { ArrowLeft, Camera } from 'lucide-react';
+import { ArrowLeft, Camera, Loader2 } from 'lucide-react';
 import api from '../services/api';
 import LoadingScreen from '../components/LoadingScreen';
 import Swal from 'sweetalert2';
@@ -225,7 +225,7 @@ const Profile = () => {
           </div>
 
           <button 
-          className="profile-save-btn" 
+          className="btn btn-primary profile-submit-btn" 
           onClick={handleSave} 
           disabled={isSaving || (name === user?.name && !selectedFile)}
         >

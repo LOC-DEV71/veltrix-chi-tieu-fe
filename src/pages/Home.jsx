@@ -331,7 +331,7 @@ const Home = () => {
       {/* Extra Features */}
       <div className="home-section-title" style={{ marginTop: '32px', position: 'relative', zIndex: 1 }}>Tiện ích mở rộng</div>
       <div className="home-features-grid" style={{ position: 'relative', zIndex: 1 }}>
-        <div className="home-feature-card" onClick={() => alert('Tính năng phân tích số liệu đang được phát triển!')}>
+        <div className="home-feature-card" onClick={() => navigate('/statistics')}>
           <div className="home-feature-icon analytics">
             <PieChart size={24} strokeWidth={2.5} />
           </div>

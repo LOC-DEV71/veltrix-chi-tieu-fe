@@ -117,66 +117,55 @@ const AiChat = () => {
     setTimeout(() => setCopiedId(null), 2000);
   };
 
-  const speakWithVietnameseVoice = (utterance) => {
-    const trySpeak = () => {
-      const voices = window.speechSynthesis.getVoices();
-      // Ưu tiên: giọng nữ vi-VN > giọng nữ bất kỳ vi > giọng vi bất kỳ
-      const viVoice =
-        voices.find(v => v.lang === 'vi-VN' && v.name.toLowerCase().includes('female')) ||
-        voices.find(v => v.lang === 'vi-VN' && /woman|female|nu|girl/i.test(v.name)) ||
-        voices.find(v => v.lang === 'vi-VN') ||
-        voices.find(v => v.lang.startsWith('vi'));
-      if (viVoice) {
-        utterance.voice = viVoice;
-        console.log('[TTS] Giọng đang dùng:', viVoice.name, viVoice.lang);
-      }
-      window.speechSynthesis.speak(utterance);
-    };
-
-    const voices = window.speechSynthesis.getVoices();
-    if (voices.length > 0) {
-      trySpeak();
-    } else {
-      // Voices chưa load xong, đợi sự kiện rồi mới speak
-      window.speechSynthesis.onvoiceschanged = () => {
-        window.speechSynthesis.onvoiceschanged = null;
-        trySpeak();
-      };
-    }
-  };
-
   const handlePlayAudio = (msgId, text) => {
+    // Nếu đang phát thì dừng
     if (playingMsgId === msgId) {
-      window.speechSynthesis.cancel();
+      // eslint-disable-next-line no-undef
+      if (typeof responsiveVoice !== 'undefined') responsiveVoice.cancel();
+      else window.speechSynthesis.cancel();
       setPlayingMsgId(null);
       setIsAudioLoading(false);
       return;
     }
-    window.speechSynthesis.cancel();
 
-    // Làm sạch markdown trước khi đọc
+    // Dừng bất kỳ giọng nào đang phát
+    // eslint-disable-next-line no-undef
+    if (typeof responsiveVoice !== 'undefined') responsiveVoice.cancel();
+    else window.speechSynthesis.cancel();
+
+    // Làm sạch markdown
     const cleanText = text
-      .replace(/```[\s\S]*?```/g, 'code block')
+      .replace(/```[\s\S]*?```/g, 'đoạn code')
       .replace(/[*_#`>~]/g, '')
-      .replace(/\n+/g, '. ');
+      .replace(/\n+/g, '. ')
+      .trim();
 
-    const utterance = new SpeechSynthesisUtterance(cleanText);
-    utterance.lang = 'vi-VN';
-    utterance.rate = 1.5;
-    utterance.pitch = 1;
-
-    utterance.onstart = () => setIsAudioLoading(false);
-    utterance.onend = () => setPlayingMsgId(null);
-    utterance.onerror = (e) => {
-      if (e.error === 'interrupted') return;
-      console.error('TTS error:', e.error);
-      setPlayingMsgId(null);
-    };
-
-    utteranceRef.current = utterance;
     setPlayingMsgId(msgId);
     setIsAudioLoading(true);
-    speakWithVietnameseVoice(utterance);
+
+    // eslint-disable-next-line no-undef
+    if (typeof responsiveVoice !== 'undefined') {
+      // Dùng ResponsiveVoice - giọng nữ tiếng Việt, hoạt động trên iOS/Android
+      // eslint-disable-next-line no-undef
+      responsiveVoice.speak(cleanText, 'Vietnamese Female', {
+        rate: 1.5,
+        onstart: () => setIsAudioLoading(false),
+        onend: () => setPlayingMsgId(null),
+        onerror: () => setPlayingMsgId(null),
+      });
+    } else {
+      // Fallback: Web Speech API nếu ResponsiveVoice chưa load
+      const utterance = new SpeechSynthesisUtterance(cleanText);
+      utterance.lang = 'vi-VN';
+      utterance.rate = 1.5;
+      utterance.onstart = () => setIsAudioLoading(false);
+      utterance.onend = () => setPlayingMsgId(null);
+      utterance.onerror = (e) => {
+        if (e.error !== 'interrupted') setPlayingMsgId(null);
+      };
+      utteranceRef.current = utterance;
+      window.speechSynthesis.speak(utterance);
+    }
   };
 
   return (

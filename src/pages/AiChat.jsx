@@ -117,29 +117,6 @@ const AiChat = () => {
     setTimeout(() => setCopiedId(null), 2000);
   };
 
-  const splitTextChunks = (text) => {
-    // Làm sạch markdown
-    const clean = text
-      .replace(/```[\s\S]*?```/g, 'đoạn code')
-      .replace(/[*_#`>~]/g, '')
-      .trim();
-
-    const chunks = [];
-    // Tách theo câu (dấu chấm, chấm hỏi, chấm than)
-    const sentences = clean.split(/(?<=[.?!])\s+/);
-    let current = '';
-    for (const s of sentences) {
-      if ((current + s).length > 190) {
-        if (current) chunks.push(current.trim());
-        current = s;
-      } else {
-        current += (current ? ' ' : '') + s;
-      }
-    }
-    if (current.trim()) chunks.push(current.trim());
-    return chunks.filter(c => c.length > 0);
-  };
-
   const playingRef = useRef(false);
   const currentAudioRef = useRef(null);
 
@@ -167,33 +144,44 @@ const AiChat = () => {
     setIsAudioLoading(true);
     playingRef.current = true;
 
-    const chunks = splitTextChunks(text);
+    // Làm sạch markdown
+    const clean = text
+      .replace(/```[\s\S]*?```/g, 'đoạn code')
+      .replace(/[*_#`>~]/g, '')
+      .trim();
 
-    for (const chunk of chunks) {
-      if (!playingRef.current) break; // Đã bấm dừng
-      try {
-        const response = await api.post('/ai/tts', { text: chunk }, { responseType: 'blob' });
-        if (!playingRef.current) break;
+    try {
+      // Backend (google-tts-api) sẽ tự chia nhỏ văn bản và gộp lại thành 1 file mp3 hoàn chỉnh
+      // Trả về 1 blob duy nhất -> iOS Safari sẽ không ngắt giữa chừng
+      const response = await api.post('/ai/tts', { text: clean }, { responseType: 'blob' });
+      if (!playingRef.current) return; // Nếu user đã ấn tắt trong lúc đang tải
 
-        const audioUrl = URL.createObjectURL(response.data);
-        const audio = new Audio(audioUrl);
-        audio.playbackRate = 1.5; // Tốc độ 1.5x chính xác
-        currentAudioRef.current = audio;
+      const audioUrl = URL.createObjectURL(response.data);
+      const audio = new Audio(audioUrl);
+      
+      audio.playbackRate = 1.5; // Tua 1.5x chính xác bằng code
+      currentAudioRef.current = audio;
+      setIsAudioLoading(false);
 
-        setIsAudioLoading(false);
+      audio.onended = () => {
+        URL.revokeObjectURL(audioUrl);
+        if (playingRef.current) {
+          setPlayingMsgId(null);
+          playingRef.current = false;
+        }
+      };
 
-        await new Promise((resolve) => {
-          audio.onended = () => { URL.revokeObjectURL(audioUrl); resolve(); };
-          audio.onerror = () => { URL.revokeObjectURL(audioUrl); resolve(); };
-          audio.play().catch(resolve);
-        });
-      } catch {
-        break;
-      }
-    }
+      audio.onerror = () => {
+        URL.revokeObjectURL(audioUrl);
+        setPlayingMsgId(null);
+        playingRef.current = false;
+      };
 
-    if (playingRef.current) {
+      await audio.play();
+    } catch (error) {
+      console.error('TTS error:', error);
       setPlayingMsgId(null);
+      setIsAudioLoading(false);
       playingRef.current = false;
     }
   };

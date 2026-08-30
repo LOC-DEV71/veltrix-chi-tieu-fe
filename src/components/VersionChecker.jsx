@@ -14,20 +14,51 @@ const VersionChecker = () => {
         const localVersion = import.meta.env.VITE_APP_VERSION || '1.0.0';
 
         if (serverVersion !== localVersion) {
+          const updatingTo = localStorage.getItem('updating_to_version');
+          const updatingTime = localStorage.getItem('updating_time');
+          
+          if (updatingTo === serverVersion && updatingTime) {
+            const timePassed = Date.now() - parseInt(updatingTime);
+            // Tránh spam cập nhật liên tục trong 3 phút (chờ Vercel build xong)
+            if (timePassed < 3 * 60 * 1000) {
+              return;
+            } else {
+              localStorage.removeItem('updating_to_version');
+              localStorage.removeItem('updating_time');
+            }
+          }
+
           hasAlerted = true;
           Swal.fire({
             title: 'Phát hiện bản cập nhật mới!',
             html: `Phiên bản <b>v${serverVersion}</b> đã có sẵn (Bạn đang dùng v${localVersion}).<br/><br/>Đây là bản cập nhật <b>bảo mật quan trọng</b>. Vui lòng cập nhật ngay để bảo vệ dữ liệu!`,
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonColor: '#ef4444',
+            confirmButtonColor: '#6366f1',
             cancelButtonColor: '#6b7280',
             confirmButtonText: 'Cập nhật ngay',
             cancelButtonText: 'Để sau',
             allowOutsideClick: false,
+            customClass: { popup: 'glass-panel' }
           }).then((result) => {
             if (result.isConfirmed) {
-              window.location.reload(true);
+              localStorage.setItem('updating_to_version', serverVersion);
+              localStorage.setItem('updating_time', Date.now().toString());
+              
+              Swal.fire({
+                title: 'Đang tải bản cập nhật...',
+                html: 'Quá trình này mất khoảng <b>1-2 phút</b> để cài đặt code mới.<br/>Vui lòng giữ nguyên màn hình!',
+                allowOutsideClick: false,
+                background: '#18181b', color: '#fff',
+                customClass: { popup: 'glass-panel' },
+                didOpen: () => {
+                  Swal.showLoading();
+                  // Chờ 15s rồi reload. Nếu Vercel chưa build xong, logic 3 phút sẽ chặn popup hiện lại
+                  setTimeout(() => {
+                    window.location.reload(true);
+                  }, 15000);
+                }
+              });
             } else {
               hasAlerted = false;
             }

@@ -179,7 +179,21 @@ const Settings = () => {
           customClass: { popup: 'glass-panel' }
         }).then((result) => {
           if (result.isConfirmed) {
-            window.location.reload(true);
+            localStorage.setItem('updating_to_version', serverVersion);
+            localStorage.setItem('updating_time', Date.now().toString());
+            Swal.fire({
+              title: 'Đang tải bản cập nhật...',
+              html: 'Quá trình này mất khoảng <b>1-2 phút</b> để cài đặt code mới.<br/>Vui lòng giữ nguyên màn hình!',
+              allowOutsideClick: false,
+              background: '#18181b', color: '#fff',
+              customClass: { popup: 'glass-panel' },
+              didOpen: () => {
+                Swal.showLoading();
+                setTimeout(() => {
+                  window.location.reload(true);
+                }, 15000);
+              }
+            });
           }
         });
       } else {

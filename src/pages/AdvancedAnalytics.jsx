@@ -71,11 +71,22 @@ const AdvancedAnalytics = () => {
     const riskLevel = getRiskText(score);
     
     let badgeClass = 'risk-low';
-    if (score >= 40 && score < 75) badgeClass = 'risk-medium';
-    if (score >= 75) badgeClass = 'risk-high';
+    let cardBg = 'linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(16, 185, 129, 0.02))';
+    let cardBorder = 'rgba(16, 185, 129, 0.3)';
+
+    if (score >= 40 && score < 75) {
+      badgeClass = 'risk-medium';
+      cardBg = 'linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(245, 158, 11, 0.02))';
+      cardBorder = 'rgba(245, 158, 11, 0.3)';
+    }
+    if (score >= 75) {
+      badgeClass = 'risk-high';
+      cardBg = 'linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(239, 68, 68, 0.02))';
+      cardBorder = 'rgba(239, 68, 68, 0.3)';
+    }
 
     return (
-      <div className="analytics-card">
+      <div className="analytics-card" style={{ background: cardBg, borderColor: cardBorder, borderWidth: '1px', borderStyle: 'solid' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
           {icon}
           <div className="analytics-card-title" style={{ margin: 0 }}>{title}</div>
@@ -177,31 +188,12 @@ const AdvancedAnalytics = () => {
               </div>
             )}
 
-            <div 
-              className="ai-commentary-box" 
-              style={{
-                background: report.budgetRiskScore >= 80 
-                  ? 'linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(239, 68, 68, 0.02))'
-                  : 'linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.02))',
-                borderColor: report.budgetRiskScore >= 80 
-                  ? 'rgba(239, 68, 68, 0.2)' 
-                  : 'rgba(16, 185, 129, 0.2)'
-              }}
-            >
-              <div 
-                className="ai-icon-container"
-                style={{ 
-                  background: report.budgetRiskScore >= 80 ? 'rgba(239, 68, 68, 0.2)' : 'rgba(16, 185, 129, 0.2)',
-                  color: report.budgetRiskScore >= 80 ? '#ef4444' : '#10b981'
-                }}
-              >
+            <div className="ai-commentary-box">
+              <div className="ai-icon-container">
                 <Brain size={24} />
               </div>
               <div className="ai-text-content">
-                <div 
-                  className="ai-text-title"
-                  style={{ color: report.budgetRiskScore >= 80 ? '#ef4444' : '#10b981' }}
-                >
+                <div className="ai-text-title">
                   Nhận xét chuyên sâu từ Veltrix AI
                 </div>
                 <div className="ai-text-body">

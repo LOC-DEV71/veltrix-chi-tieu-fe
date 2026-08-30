@@ -23,9 +23,10 @@ const Settings = () => {
   const { 
     theme, toggleTheme, isAnimating, 
     customBg, updateCustomBg, 
-    avatarFrame, updateAvatarFrame,
     triggerBgAnimation, finishBgAnimation, cancelBgAnimation 
   } = useTheme();
+  
+  const { updateUser } = useAuth();
   
   const [isUploadingBg, setIsUploadingBg] = useState(false);
   const [showAdvancedModal, setShowAdvancedModal] = useState(false);
@@ -86,6 +87,22 @@ const Settings = () => {
       cancelBgAnimation();
     } finally {
       setIsUploadingBg(false);
+    }
+  };
+
+  const handleUpdateAvatarFrame = async (frameUrl) => {
+    try {
+      const res = await api.put('/auth/profile', { avatarFrame: frameUrl === null ? 'null' : frameUrl });
+      updateUser(res.data);
+    } catch (err) {
+      console.error('Lỗi khi lưu khung đại diện:', err);
+      Swal.fire({
+        icon: 'error',
+        title: 'Lỗi',
+        text: 'Không thể lưu khung đại diện',
+        background: '#18181b',
+        color: '#fff'
+      });
     }
   };
 
@@ -422,13 +439,13 @@ const Settings = () => {
               padding: '4px'
             }}>
               <div 
-                onClick={() => updateAvatarFrame(null)}
+                onClick={() => handleUpdateAvatarFrame(null)}
                 style={{ 
                   aspectRatio: '1', borderRadius: '50%', 
                   background: 'rgba(255,255,255,0.1)',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   cursor: 'pointer',
-                  border: avatarFrame === null ? '2px solid #10b981' : '2px solid transparent'
+                  border: !user?.avatarFrame ? '2px solid #10b981' : '2px solid transparent'
                 }}
               >
                 <X size={24} color="var(--text-secondary)" />
@@ -437,13 +454,13 @@ const Settings = () => {
               {AVATAR_FRAMES.map(frame => (
                 <div 
                   key={frame}
-                  onClick={() => updateAvatarFrame(frame)}
+                  onClick={() => handleUpdateAvatarFrame(frame)}
                   style={{
                     aspectRatio: '1', borderRadius: '50%',
                     background: '#000',
                     cursor: 'pointer',
                     position: 'relative',
-                    border: avatarFrame === frame ? '2px solid #10b981' : '2px solid transparent'
+                    border: user?.avatarFrame === frame ? '2px solid #10b981' : '2px solid transparent'
                   }}
                 >
                   <img src={`/${frame}`} alt={frame} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />

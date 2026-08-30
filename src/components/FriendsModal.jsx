@@ -273,11 +273,16 @@ const FriendsModal = ({ onClose }) => {
               ) : (
                 friends.map(f => (
                   <div key={f._id} className="friend-item">
-                    {f.avatar ? (
-                      <img src={f.avatar} alt="Avatar" className="f-avatar" />
-                    ) : (
-                      <div className="f-avatar-placeholder">{f.name.charAt(0)}</div>
-                    )}
+                    <div style={{ position: 'relative', display: 'flex' }}>
+                      {f.avatar ? (
+                        <img src={f.avatar} alt="Avatar" className="f-avatar" />
+                      ) : (
+                        <div className="f-avatar-placeholder">{f.name.charAt(0)}</div>
+                      )}
+                      {f.avatarFrame && (
+                        <img src={`/${f.avatarFrame}`} alt="frame" style={{ position: 'absolute', top: '-20%', left: '-20%', width: '140%', height: '140%', pointerEvents: 'none' }} />
+                      )}
+                    </div>
                     <div className="f-info">
                       <div className="f-name">{f.name}</div>
                       <div className="f-email">{f.email}</div>
@@ -318,11 +323,16 @@ const FriendsModal = ({ onClose }) => {
               <div className="search-results">
                 {!loading && searchResults.map(u => (
                   <div key={u._id} className="friend-item">
-                    {u.avatar ? (
-                      <img src={u.avatar} alt="Avatar" className="f-avatar" />
-                    ) : (
-                      <div className="f-avatar-placeholder">{u.name.charAt(0)}</div>
-                    )}
+                    <div style={{ position: 'relative', display: 'flex' }}>
+                      {u.avatar ? (
+                        <img src={u.avatar} alt="Avatar" className="f-avatar" />
+                      ) : (
+                        <div className="f-avatar-placeholder">{u.name.charAt(0)}</div>
+                      )}
+                      {u.avatarFrame && (
+                        <img src={`/${u.avatarFrame}`} alt="frame" style={{ position: 'absolute', top: '-20%', left: '-20%', width: '140%', height: '140%', pointerEvents: 'none' }} />
+                      )}
+                    </div>
                     <div className="f-info">
                       <div className="f-name">{u.name}</div>
                       <div className="f-email">{u.email}</div>
@@ -342,11 +352,16 @@ const FriendsModal = ({ onClose }) => {
               ) : (
                 requests.map(req => (
                   <div key={req._id} className="friend-item">
-                    {req.sender?.avatar ? (
-                      <img src={req.sender.avatar} alt="Avatar" className="f-avatar" />
-                    ) : (
-                      <div className="f-avatar-placeholder">{req.sender?.name?.charAt(0)}</div>
-                    )}
+                    <div style={{ position: 'relative', display: 'flex' }}>
+                      {req.sender?.avatar ? (
+                        <img src={req.sender.avatar} alt="Avatar" className="f-avatar" />
+                      ) : (
+                        <div className="f-avatar-placeholder">{req.sender?.name?.charAt(0)}</div>
+                      )}
+                      {req.sender?.avatarFrame && (
+                        <img src={`/${req.sender.avatarFrame}`} alt="frame" style={{ position: 'absolute', top: '-20%', left: '-20%', width: '140%', height: '140%', pointerEvents: 'none' }} />
+                      )}
+                    </div>
                     <div className="f-info">
                       <div className="f-name">{req.sender?.name}</div>
                       <div className="f-email">muốn kết bạn với bạn</div>

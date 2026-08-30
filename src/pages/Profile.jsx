@@ -12,7 +12,6 @@ import './Profile.css';
 
 const Profile = () => {
   const { user, updateUser } = useAuth();
-  const { avatarFrame } = useTheme();
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
   
@@ -173,9 +172,9 @@ const Profile = () => {
               alt="Avatar" 
               className="profile-avatar"
             />
-            {avatarFrame && (
+            {user?.avatarFrame && (
               <img 
-                src={`/${avatarFrame}`} 
+                src={`/${user.avatarFrame}`} 
                 alt="frame" 
                 style={{
                   position: 'absolute',

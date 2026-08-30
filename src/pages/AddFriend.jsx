@@ -70,11 +70,26 @@ const AddFriend = () => {
           <>
             <h2>Yêu cầu kết bạn</h2>
             <div className="friend-profile">
-              {friendUser.avatar ? (
-                <img src={friendUser.avatar} alt={friendUser.name} className="large-avatar" />
-              ) : (
-                <div className="large-avatar-placeholder">{friendUser.name.charAt(0)}</div>
-              )}
+              <div style={{ position: 'relative', display: 'inline-block' }}>
+                {friendUser.avatar ? (
+                  <img src={friendUser.avatar} alt={friendUser.name} className="large-avatar" />
+                ) : (
+                  <div className="large-avatar-placeholder">{friendUser.name.charAt(0)}</div>
+                )}
+                {friendUser.avatarFrame && (
+                  <img 
+                    src={`/${friendUser.avatarFrame}`} 
+                    alt="frame" 
+                    style={{
+                      position: 'absolute',
+                      top: '-20%', left: '-20%',
+                      width: '140%', height: '140%',
+                      pointerEvents: 'none',
+                      zIndex: 2
+                    }}
+                  />
+                )}
+              </div>
               <h3>{friendUser.name}</h3>
               <p>Muốn kết bạn với bạn để cùng quản lý chi tiêu và chia sẻ khoảnh khắc.</p>
             </div>

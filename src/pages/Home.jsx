@@ -28,7 +28,7 @@ import './Home.css';
 
 const Home = () => {
   const { user, logout } = useAuth();
-  const { avatarFrame } = useTheme();
+  const { customBg } = useTheme();
   const navigate = useNavigate();
   const [budget, setBudget] = useState(null);
   const [categories, setCategories] = useState([]);
@@ -165,9 +165,9 @@ const Home = () => {
             className="home-avatar" 
             onClick={() => setShowAvatarMenu(!showAvatarMenu)}
           />
-          {avatarFrame && (
+          {user?.avatarFrame && (
             <img 
-              src={`/${avatarFrame}`} 
+              src={`/${user.avatarFrame}`} 
               alt="frame" 
               style={{
                 position: 'absolute',

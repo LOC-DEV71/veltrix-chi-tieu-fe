@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import api from '../services/api';
 import './VersionChecker.css';
 import { Smartphone, Check, Loader2 } from 'lucide-react';
+import versionData from '../version.json';
 
 const VersionChecker = () => {
   const [show, setShow] = useState(false);
@@ -15,7 +16,7 @@ const VersionChecker = () => {
     try {
       const { data } = await api.get(`/system/version?t=${Date.now()}`);
       const sVer = data.version;
-      const lVer = import.meta.env.VITE_APP_VERSION || '1.0.0';
+      const lVer = versionData.version;
 
       setServerVer(sVer);
       setLocalVer(lVer);
@@ -58,7 +59,7 @@ const VersionChecker = () => {
   useEffect(() => {
     const successVer = localStorage.getItem('show_update_success');
     if (successVer) {
-      const lVer = import.meta.env.VITE_APP_VERSION || '1.0.0';
+      const lVer = versionData.version;
       if (lVer === successVer) {
         setServerVer(successVer);
         setStatus('success');

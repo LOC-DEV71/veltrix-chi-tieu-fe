@@ -7,6 +7,7 @@ import { User, Palette, Globe, Info, LogOut, ChevronRight, Calendar, Moon, Sun, 
 import Swal from 'sweetalert2';
 import api from '../services/api';
 import PinScreen from '../components/PinScreen';
+import versionData from '../version.json';
 import './Settings.css';
 
 const AVATAR_FRAMES = [
@@ -389,9 +390,9 @@ const Settings = () => {
               </div>
               <span className="settings-label">Phiên bản</span>
             </div>
-            <div className="settings-value">
-              <span>v{import.meta.env.VITE_APP_VERSION || '1.0.0'}</span>
-              <ChevronRight size={18} className="settings-arrow" />
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-secondary)' }}>
+              <span>v{versionData.version}</span>
+              <ChevronRight size={16} />
             </div>
           </div>
 

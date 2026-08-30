@@ -221,13 +221,34 @@ const FriendsModal = ({ onClose }) => {
           onClick={e => e.stopPropagation()}
           style={{
             width: '100%', maxWidth: '480px', height: '100%',
-            background: selectedFriendProfile.customBg ? `url(${selectedFriendProfile.customBg}) center/cover no-repeat` : 'var(--bg-primary)',
+            background: 'var(--bg-primary)',
             position: 'relative',
             display: 'flex', flexDirection: 'column'
           }}
         >
-          {/* Overlay to darken background if there is a customBg */}
-          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', zIndex: 0 }} />
+          {/* Background Layer with Opacity */}
+          {selectedFriendProfile.customBg && (
+            <div style={{
+              position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
+              opacity: 0.2, zIndex: 0, pointerEvents: 'none', overflow: 'hidden'
+            }}>
+              {selectedFriendProfile.customBg.includes('/video/upload/') || selectedFriendProfile.customBg.match(/\.(mp4|webm|mov)$/i) ? (
+                <video 
+                  src={selectedFriendProfile.customBg} 
+                  autoPlay loop muted playsInline 
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                />
+              ) : (
+                <div 
+                  style={{ 
+                    width: '100%', height: '100%', 
+                    backgroundImage: `url(${selectedFriendProfile.customBg})`, 
+                    backgroundSize: 'cover', backgroundPosition: 'center' 
+                  }} 
+                />
+              )}
+            </div>
+          )}
           
           <div style={{ position: 'relative', zIndex: 1, padding: '20px', paddingTop: 'calc(20px + env(safe-area-inset-top))' }}>
             <div style={{ display: 'flex', alignItems: 'center', marginBottom: '40px' }}>

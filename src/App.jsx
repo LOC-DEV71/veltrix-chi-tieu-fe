@@ -58,7 +58,7 @@ const AppRoutes = () => {
           pointerEvents: 'none',
           overflow: 'hidden'
         }}>
-          {customBg.includes('/video/upload/') || customBg.match(/\.(mp4|webm)$/i) ? (
+          {customBg.includes('/video/upload/') || customBg.match(/\.(mp4|webm|mov)$/i) ? (
             <video 
               src={customBg} 
               autoPlay 

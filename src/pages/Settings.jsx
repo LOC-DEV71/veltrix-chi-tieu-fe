@@ -361,7 +361,7 @@ const Settings = () => {
                 <span>{customBg ? 'Thay đổi hình nền động' : 'Tải lên Video/GIF'}</span>
                 <input 
                   type="file" 
-                  accept="image/*,video/mp4,video/webm,image/gif" 
+                  accept="image/*,video/mp4,video/webm,video/quicktime,.mov,image/gif" 
                   onChange={handleBgChange}
                   style={{ display: 'none' }}
                 />

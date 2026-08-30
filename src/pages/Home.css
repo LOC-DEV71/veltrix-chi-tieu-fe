@@ -28,10 +28,10 @@
 }
 
 .home-avatar {
-  width: 42px;
-  height: 42px;
+  width: 54px;
+  height: 54px;
   border-radius: 50%;
-  border: 2px solid var(--bg-primary, #09090b);
+  border: 2px solid var(--border-color);
   object-fit: cover;
   z-index: 2;
 }
@@ -300,33 +300,13 @@
 .home-avatar-container {
   position: relative;
   cursor: pointer;
-  width: 48px;
-  height: 48px;
+  width: 54px;
+  height: 54px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1;
-}
-
-.home-avatar-container::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  background: conic-gradient(
-    from 0deg,
-    #6366f1,
-    #a855f7,
-    #ec4899,
-    #6366f1
-  );
-  animation: avatar-ring-spin 4s linear infinite;
-  z-index: -1;
-}
-
-@keyframes avatar-ring-spin {
-  100% { transform: rotate(360deg); }
 }
 
 .home-avatar-menu {

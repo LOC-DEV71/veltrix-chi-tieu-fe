@@ -117,6 +117,34 @@ const AiChat = () => {
     setTimeout(() => setCopiedId(null), 2000);
   };
 
+  const speakWithVietnameseVoice = (utterance) => {
+    const trySpeak = () => {
+      const voices = window.speechSynthesis.getVoices();
+      // Ưu tiên: giọng nữ vi-VN > giọng nữ bất kỳ vi > giọng vi bất kỳ
+      const viVoice =
+        voices.find(v => v.lang === 'vi-VN' && v.name.toLowerCase().includes('female')) ||
+        voices.find(v => v.lang === 'vi-VN' && /woman|female|nu|girl/i.test(v.name)) ||
+        voices.find(v => v.lang === 'vi-VN') ||
+        voices.find(v => v.lang.startsWith('vi'));
+      if (viVoice) {
+        utterance.voice = viVoice;
+        console.log('[TTS] Giọng đang dùng:', viVoice.name, viVoice.lang);
+      }
+      window.speechSynthesis.speak(utterance);
+    };
+
+    const voices = window.speechSynthesis.getVoices();
+    if (voices.length > 0) {
+      trySpeak();
+    } else {
+      // Voices chưa load xong, đợi sự kiện rồi mới speak
+      window.speechSynthesis.onvoiceschanged = () => {
+        window.speechSynthesis.onvoiceschanged = null;
+        trySpeak();
+      };
+    }
+  };
+
   const handlePlayAudio = (msgId, text) => {
     if (playingMsgId === msgId) {
       window.speechSynthesis.cancel();
@@ -137,17 +165,8 @@ const AiChat = () => {
     utterance.rate = 1.5;
     utterance.pitch = 1;
 
-    // Chọn giọng tiếng Việt nếu có
-    const voices = window.speechSynthesis.getVoices();
-    const viVoice = voices.find(v => v.lang === 'vi-VN') || voices.find(v => v.lang.startsWith('vi'));
-    if (viVoice) utterance.voice = viVoice;
-
-    utterance.onstart = () => {
-      setIsAudioLoading(false);
-    };
-    utterance.onend = () => {
-      setPlayingMsgId(null);
-    };
+    utterance.onstart = () => setIsAudioLoading(false);
+    utterance.onend = () => setPlayingMsgId(null);
     utterance.onerror = (e) => {
       if (e.error === 'interrupted') return;
       console.error('TTS error:', e.error);
@@ -157,7 +176,7 @@ const AiChat = () => {
     utteranceRef.current = utterance;
     setPlayingMsgId(msgId);
     setIsAudioLoading(true);
-    window.speechSynthesis.speak(utterance);
+    speakWithVietnameseVoice(utterance);
   };
 
   return (

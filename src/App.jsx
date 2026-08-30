@@ -25,6 +25,7 @@ import ChatRoom from './pages/ChatRoom';
 import AdvancedAnalytics from './pages/AdvancedAnalytics';
 import PushNotificationManager from './components/PushNotificationManager';
 import PinScreen from './components/PinScreen';
+import VersionChecker from './components/VersionChecker';
 import './index.css';
 
 const ProtectedRoute = ({ children }) => {
@@ -84,6 +85,7 @@ const AppRoutes = () => {
           )}
         </div>
       )}
+      <VersionChecker />
       <PushNotificationManager user={user} />
       <Routes>
       <Route path="/login" element={user ? <Navigate to="/" replace /> : <Login />} />

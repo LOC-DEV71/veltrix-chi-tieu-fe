@@ -150,7 +150,7 @@ const Home = () => {
       />
 
       {/* Header */}
-      <div className="home-header" style={{ position: 'relative', zIndex: 10 }}>
+      <div className="home-header">
         <div>
           <p className="home-greeting">Xin chào, {user?.name || 'Bạn'} 👋</p>
           <p style={{ color: 'var(--text-secondary)', fontSize: '13px', marginTop: '2px' }}>

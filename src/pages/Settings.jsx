@@ -3,9 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import BottomNav from '../components/BottomNav';
-import { User, Palette, Globe, Info, LogOut, ChevronRight, Calendar, Moon, Sun, X, Loader2, Image as ImageIcon, Bell, Sparkles, Settings as SettingsIcon, PlaySquare, Hexagon } from 'lucide-react';
+import { User, Palette, Globe, Info, LogOut, ChevronRight, Calendar, Moon, Sun, X, Loader2, Image as ImageIcon, Bell, Sparkles, Settings as SettingsIcon, PlaySquare, Hexagon, Lock } from 'lucide-react';
 import Swal from 'sweetalert2';
 import api from '../services/api';
+import PinScreen from '../components/PinScreen';
 import './Settings.css';
 
 const AVATAR_FRAMES = [
@@ -29,6 +30,7 @@ const Settings = () => {
   
   const [isUploadingBg, setIsUploadingBg] = useState(false);
   const [showAdvancedModal, setShowAdvancedModal] = useState(false);
+  const [showPinSetup, setShowPinSetup] = useState(false);
 
   const handleLogout = async () => {
     const result = await Swal.fire({
@@ -160,8 +162,86 @@ const Settings = () => {
     }
   };
 
+  const handleCheckVersion = async () => {
+    try {
+      const res = await api.get('/system/version');
+      const serverVersion = res.data.version;
+      const currentVersion = import.meta.env.VITE_APP_VERSION || '1.0.0';
+      if (serverVersion !== currentVersion) {
+        Swal.fire({
+          title: 'Cập nhật phiên bản mới',
+          text: `Đã có phiên bản ${serverVersion}. Phiên bản của bạn là ${currentVersion}.`,
+          icon: 'info',
+          showCancelButton: true,
+          confirmButtonText: 'Cập nhật ngay',
+          cancelButtonText: 'Để sau',
+          background: '#18181b', color: '#fff',
+          customClass: { popup: 'glass-panel' }
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.reload(true);
+          }
+        });
+      } else {
+        Swal.fire({
+          icon: 'success',
+          title: 'Đã cập nhật',
+          text: 'Bạn đang sử dụng phiên bản mới nhất.',
+          background: '#18181b', color: '#fff',
+          customClass: { popup: 'glass-panel' }
+        });
+      }
+    } catch (err) {
+      Swal.fire('Lỗi', 'Không thể kiểm tra phiên bản', 'error');
+    }
+  };
+
+  const handleTogglePin = async () => {
+    if (user?.hasPin) {
+      const result = await Swal.fire({
+        title: 'Tắt mã PIN?',
+        text: 'Bạn sẽ không cần nhập mã PIN mỗi khi mở app hay giao dịch nữa. Tuy nhiên điều này sẽ làm giảm bảo mật.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ef4444',
+        cancelButtonText: 'Hủy',
+        confirmButtonText: 'Tắt mã PIN',
+        background: '#18181b', color: '#fff',
+        customClass: { popup: 'glass-panel' }
+      });
+
+      if (result.isConfirmed) {
+        try {
+          await api.post('/auth/remove-pin');
+          updateUser({ ...user, hasPin: false });
+          Swal.fire({
+            icon: 'success',
+            title: 'Thành công',
+            text: 'Đã tắt mã PIN',
+            background: '#18181b', color: '#fff',
+            customClass: { popup: 'glass-panel' }
+          });
+        } catch (err) {
+          Swal.fire('Lỗi', 'Không thể tắt mã PIN', 'error');
+        }
+      }
+    } else {
+      setShowPinSetup(true);
+    }
+  };
+
   return (
-    <div className="settings-container">
+    <>
+      {showPinSetup && (
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 99999 }}>
+          <PinScreen 
+            mode="setup"
+            onSuccess={() => setShowPinSetup(false)}
+            onCancel={() => setShowPinSetup(false)} 
+          />
+        </div>
+      )}
+      <div className="settings-container">
       {/* Dynamic Background Glow */}
       <div 
         style={{
@@ -307,6 +387,19 @@ const Settings = () => {
             </div>
           </div>
 
+          <div className="settings-row" onClick={handleTogglePin}>
+            <div className="settings-row-left">
+              <div className="settings-icon-wrapper purple">
+                <Lock size={20} />
+              </div>
+              <span className="settings-label">Bảo mật mã PIN</span>
+            </div>
+            <div className="settings-value">
+              <span>{user?.hasPin ? 'Đang bật' : 'Đã tắt'}</span>
+              <ChevronRight size={18} className="settings-arrow" />
+            </div>
+          </div>
+
           {user?.createdAt && (
             <div className="settings-row">
               <div className="settings-row-left">
@@ -321,7 +414,7 @@ const Settings = () => {
             </div>
           )}
           
-          <div className="settings-row" onClick={() => handlePlaceholderClick('Thông tin phiên bản')}>
+          <div className="settings-row" onClick={handleCheckVersion}>
             <div className="settings-row-left">
               <div className="settings-icon-wrapper gray">
                 <Info size={20} />
@@ -329,7 +422,8 @@ const Settings = () => {
               <span className="settings-label">Phiên bản</span>
             </div>
             <div className="settings-value">
-              <span>v1.0.0</span>
+              <span>v{import.meta.env.VITE_APP_VERSION || '1.0.0'}</span>
+              <ChevronRight size={18} className="settings-arrow" />
             </div>
           </div>
 
@@ -485,6 +579,7 @@ const Settings = () => {
 
       <BottomNav />
     </div>
+    </>
   );
 };
 

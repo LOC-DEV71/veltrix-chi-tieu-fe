@@ -28,6 +28,9 @@ export const AuthProvider = ({ children }) => {
 
       const { data } = await api.get('/auth/me');
       setUser(data);
+      if (!data.hasPin) {
+        setPinVerified(true);
+      }
     } catch (error) {
       localStorage.removeItem('token');
       setUser(null);
@@ -54,8 +57,13 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem('token', data.token);
     }
     setUser(data);
-    // require PIN again on login
-    setPinVerified(false);
+    
+    // We should fetch auth/me to get the real hasPin status
+    const meRes = await api.get('/auth/me');
+    setUser(meRes.data);
+    if (!meRes.data.hasPin) setPinVerified(true);
+    else setPinVerified(false);
+    
     return data;
   };
 
@@ -65,7 +73,7 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem('token', data.token);
     }
     setUser(data);
-    setPinVerified(false);
+    setPinVerified(true); // new user definitely has no PIN
     return data;
   };
 

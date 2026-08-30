@@ -59,6 +59,7 @@ const PinScreen = ({ mode = 'lock', onSuccess, onCancel }) => {
         timer: 1500,
         showConfirmButton: false
       });
+      if (onSuccess) onSuccess();
     } catch (err) {
       triggerError();
       Swal.fire('Lỗi', err.response?.data?.message || 'Không thể thiết lập mã PIN', 'error');

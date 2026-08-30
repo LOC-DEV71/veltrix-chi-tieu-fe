@@ -6,6 +6,8 @@ import { ArrowLeft, Camera } from 'lucide-react';
 import api from '../services/api';
 import LoadingScreen from '../components/LoadingScreen';
 import Swal from 'sweetalert2';
+import Cropper from 'react-easy-crop';
+import getCroppedImg from '../utils/cropImage';
 import './Profile.css';
 
 const Profile = () => {
@@ -18,6 +20,14 @@ const Profile = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(user?.avatar || '');
   const [isSaving, setIsSaving] = useState(false);
+  
+  // Cropper states
+  const [showCropper, setShowCropper] = useState(false);
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
+  const [tempImageUrl, setTempImageUrl] = useState('');
+  const [isGif, setIsGif] = useState(false);
 
   // If user is null initially (page refresh), handle it or show loading
   if (!user) return <LoadingScreen />;
@@ -29,10 +39,51 @@ const Profile = () => {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setSelectedFile(file);
-      // Create a local preview URL
+      const isFileGif = file.type === 'image/gif';
+      setIsGif(isFileGif);
+      
       const objectUrl = URL.createObjectURL(file);
-      setPreviewUrl(objectUrl);
+      
+      if (isFileGif) {
+        // Bypass crop for GIF
+        setSelectedFile(file);
+        setPreviewUrl(objectUrl);
+      } else {
+        // Show cropper for static image
+        setTempImageUrl(objectUrl);
+        setShowCropper(true);
+        // Reset cropper
+        setCrop({ x: 0, y: 0 });
+        setZoom(1);
+      }
+    }
+  };
+
+  const onCropComplete = (croppedArea, croppedAreaPixels) => {
+    setCroppedAreaPixels(croppedAreaPixels);
+  };
+
+  const handleCropSave = async () => {
+    try {
+      const croppedImageBlob = await getCroppedImg(
+        tempImageUrl,
+        croppedAreaPixels
+      );
+      
+      // Convert Blob to File
+      const croppedFile = new File([croppedImageBlob], 'avatar.jpg', { type: 'image/jpeg' });
+      setSelectedFile(croppedFile);
+      setPreviewUrl(URL.createObjectURL(croppedFile));
+      setShowCropper(false);
+    } catch (e) {
+      console.error(e);
+      Swal.fire({
+        icon: 'error',
+        title: 'Lỗi',
+        text: 'Không thể cắt ảnh',
+        background: '#18181b',
+        color: '#fff'
+      });
     }
   };
 
@@ -141,9 +192,9 @@ const Profile = () => {
             {/* The accept="image/*" combined with capture allows mobile to open camera/gallery */}
             <input 
               type="file" 
+              accept="image/*,image/gif"
               ref={fileInputRef} 
               className="profile-file-input" 
-              accept="image/*" 
               onChange={handleFileChange}
             />
           </div>
@@ -174,14 +225,49 @@ const Profile = () => {
           </div>
 
           <button 
-            className="btn btn-primary profile-submit-btn" 
-            onClick={handleSave}
-            disabled={isSaving || !name.trim()}
-          >
-            Lưu thay đổi
-          </button>
-        </div>
+          className="profile-save-btn" 
+          onClick={handleSave} 
+          disabled={isSaving || (name === user?.name && !selectedFile)}
+        >
+          {isSaving ? <Loader2 className="animate-spin" /> : 'Lưu thay đổi'}
+        </button>
       </div>
+
+      {showCropper && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh',
+          background: 'rgba(0,0,0,0.9)', zIndex: 9999,
+          display: 'flex', flexDirection: 'column'
+        }}>
+          <div style={{ position: 'relative', flex: 1 }}>
+            <Cropper
+              image={tempImageUrl}
+              crop={crop}
+              zoom={zoom}
+              aspect={1}
+              cropShape="round"
+              showGrid={false}
+              onCropChange={setCrop}
+              onCropComplete={onCropComplete}
+              onZoomChange={setZoom}
+            />
+          </div>
+          <div style={{ padding: '20px', background: '#18181b', display: 'flex', gap: '10px' }}>
+            <button 
+              onClick={() => setShowCropper(false)}
+              style={{ flex: 1, padding: '12px', borderRadius: '12px', background: '#3f3f46', color: '#fff', border: 'none', fontWeight: 600 }}
+            >
+              Hủy
+            </button>
+            <button 
+              onClick={handleCropSave}
+              style={{ flex: 1, padding: '12px', borderRadius: '12px', background: '#6366f1', color: '#fff', border: 'none', fontWeight: 600 }}
+            >
+              Cắt & Chọn
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

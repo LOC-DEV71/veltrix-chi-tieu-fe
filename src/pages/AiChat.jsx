@@ -17,14 +17,12 @@ const AiChat = () => {
   const [copiedId, setCopiedId] = useState(null);
   const [playingMsgId, setPlayingMsgId] = useState(null);
   const [isAudioLoading, setIsAudioLoading] = useState(false);
-  const audioRef = useRef(null);
-  const chunksRef = useRef([]);
-  const chunkIndexRef = useRef(0);
+  const utteranceRef = useRef(null);
 
   useEffect(() => {
     fetchHistory();
     return () => {
-      if (audioRef.current) audioRef.current.pause();
+      window.speechSynthesis.cancel();
     };
   }, []);
 
@@ -71,7 +69,7 @@ const AiChat = () => {
             text: 'Lịch sử đã được xóa. Chúng ta bắt đầu lại nhé!'
           }
         ]);
-        if (audioRef.current) audioRef.current.pause();
+        window.speechSynthesis.cancel();
         setPlayingMsgId(null);
       } catch (error) {
         const errorMsg = error.response?.data?.message || error.message || 'Lỗi không xác định';
@@ -119,70 +117,47 @@ const AiChat = () => {
     setTimeout(() => setCopiedId(null), 2000);
   };
 
-  const splitIntoChunks = (text) => {
-    const chunks = [];
-    // Loại bỏ các dòng markdown như ```json, vì đọc sẽ lỗi
-    const cleanText = text.replace(/```[a-z]*\n/g, '').replace(/```/g, '');
-    const lines = cleanText.split('\n');
-    for (const line of lines) {
-      if (!line.trim()) continue;
-      if (line.length > 250) {
-        const sentences = line.split(/(?<=[.?!;])\s+/);
-        sentences.forEach(s => s.trim() && chunks.push(s.trim()));
-      } else {
-        chunks.push(line.trim());
-      }
-    }
-    return chunks;
-  };
-
-  const playNextChunk = async () => {
-    if (chunkIndexRef.current >= chunksRef.current.length) {
-      setPlayingMsgId(null);
-      return;
-    }
-    setIsAudioLoading(true);
-    const text = chunksRef.current[chunkIndexRef.current];
-    try {
-      const response = await api.post('/ai/tts', { text, rate: '+50%' }, { responseType: 'blob' });
-      const audioUrl = URL.createObjectURL(response.data);
-      const audio = new Audio(audioUrl);
-      audioRef.current = audio;
-      
-      audio.onended = () => {
-        URL.revokeObjectURL(audioUrl);
-        chunkIndexRef.current += 1;
-        playNextChunk();
-      };
-      
-      audio.onplay = () => setIsAudioLoading(false);
-      await audio.play();
-    } catch (err) {
-      console.error('Lỗi phát audio:', err);
-      setPlayingMsgId(null);
-      setIsAudioLoading(false);
-      Swal.fire({ toast: true, position: 'top-end', icon: 'error', title: 'Lỗi phát âm thanh', showConfirmButton: false, timer: 2000 });
-    }
-  };
-
   const handlePlayAudio = (msgId, text) => {
     if (playingMsgId === msgId) {
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current = null;
-      }
+      window.speechSynthesis.cancel();
       setPlayingMsgId(null);
       setIsAudioLoading(false);
       return;
     }
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current = null;
-    }
+    window.speechSynthesis.cancel();
+
+    // Làm sạch markdown trước khi đọc
+    const cleanText = text
+      .replace(/```[\s\S]*?```/g, 'code block')
+      .replace(/[*_#`>~]/g, '')
+      .replace(/\n+/g, '. ');
+
+    const utterance = new SpeechSynthesisUtterance(cleanText);
+    utterance.lang = 'vi-VN';
+    utterance.rate = 1.5;
+    utterance.pitch = 1;
+
+    // Chọn giọng tiếng Việt nếu có
+    const voices = window.speechSynthesis.getVoices();
+    const viVoice = voices.find(v => v.lang === 'vi-VN') || voices.find(v => v.lang.startsWith('vi'));
+    if (viVoice) utterance.voice = viVoice;
+
+    utterance.onstart = () => {
+      setIsAudioLoading(false);
+    };
+    utterance.onend = () => {
+      setPlayingMsgId(null);
+    };
+    utterance.onerror = (e) => {
+      if (e.error === 'interrupted') return;
+      console.error('TTS error:', e.error);
+      setPlayingMsgId(null);
+    };
+
+    utteranceRef.current = utterance;
     setPlayingMsgId(msgId);
-    chunksRef.current = splitIntoChunks(text);
-    chunkIndexRef.current = 0;
-    playNextChunk();
+    setIsAudioLoading(true);
+    window.speechSynthesis.speak(utterance);
   };
 
   return (

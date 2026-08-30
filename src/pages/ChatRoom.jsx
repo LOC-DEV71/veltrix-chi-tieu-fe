@@ -108,13 +108,28 @@ const ChatRoom = () => {
           <ChevronLeft size={24} color="var(--text-primary)" />
         </button>
         <div className="chatroom-friend-info">
-          {friend?.avatar ? (
-            <img src={friend.avatar} alt="avatar" className="chatroom-avatar" />
-          ) : (
-            <div className="chatroom-avatar-placeholder">
-              {friend?.name?.charAt(0) || '?'}
-            </div>
-          )}
+          <div style={{ position: 'relative', width: '40px', height: '40px' }}>
+            {friend?.avatar ? (
+              <img src={friend.avatar} alt="avatar" className="chatroom-avatar" style={{ margin: 0 }} />
+            ) : (
+              <div className="chatroom-avatar-placeholder">
+                {friend?.name?.charAt(0) || '?'}
+              </div>
+            )}
+            {friend?.avatarFrame && (
+              <img 
+                src={`/${friend.avatarFrame}`} 
+                alt="frame" 
+                style={{
+                  position: 'absolute',
+                  top: '-20%', left: '-20%',
+                  width: '140%', height: '140%',
+                  pointerEvents: 'none',
+                  zIndex: 2
+                }}
+              />
+            )}
+          </div>
           <h2>{friend?.name}</h2>
         </div>
         <div style={{ width: 24 }}></div>

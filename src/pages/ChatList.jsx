@@ -48,15 +48,28 @@ const ChatList = () => {
               className="chatlist-item" 
               onClick={() => navigate(`/chat/${conv.friend._id}`)}
             >
-              <div className="chatlist-avatar-wrapper">
+              <div className="chatlist-avatar-wrapper" style={{ position: 'relative', width: '50px', height: '50px', marginRight: '15px' }}>
                 {conv.friend.avatar ? (
-                  <img src={conv.friend.avatar} alt="avatar" className="chatlist-avatar" />
+                  <img src={conv.friend.avatar} alt="avatar" className="chatlist-avatar" style={{ margin: 0 }} />
                 ) : (
                   <div className="chatlist-avatar-placeholder">
                     {conv.friend.name?.charAt(0) || '?'}
                   </div>
                 )}
-                {conv.unreadCount > 0 && <span className="unread-dot"></span>}
+                {conv.friend.avatarFrame && (
+                  <img 
+                    src={`/${conv.friend.avatarFrame}`} 
+                    alt="frame" 
+                    style={{
+                      position: 'absolute',
+                      top: '-20%', left: '-20%',
+                      width: '140%', height: '140%',
+                      pointerEvents: 'none',
+                      zIndex: 2
+                    }}
+                  />
+                )}
+                {conv.unreadCount > 0 && <span className="unread-dot" style={{ zIndex: 3 }}></span>}
               </div>
               <div className="chatlist-info">
                 <div className="chatlist-name">{conv.friend.name}</div>

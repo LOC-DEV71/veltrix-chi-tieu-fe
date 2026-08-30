@@ -228,11 +228,26 @@ const Feed = () => {
   const locketHeader = (
     <div className="locket-header">
       <div className="locket-avatar-btn" onClick={() => setShowFriendsModal(true)}>
-        {user?.avatar ? (
-          <img src={user.avatar} alt="You" />
-        ) : (
-          <div className="locket-avatar-placeholder">{user?.name?.charAt(0) || '<'}</div>
-        )}
+        <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+          {user?.avatar ? (
+            <img src={user.avatar} alt="You" />
+          ) : (
+            <div className="locket-avatar-placeholder">{user?.name?.charAt(0) || '<'}</div>
+          )}
+          {user?.avatarFrame && (
+            <img 
+              src={`/${user.avatarFrame}`} 
+              alt="frame" 
+              style={{
+                position: 'absolute',
+                top: '-20%', left: '-20%',
+                width: '140%', height: '140%',
+                pointerEvents: 'none',
+                zIndex: 2
+              }}
+            />
+          )}
+        </div>
       </div>
       <div className="locket-pill" onClick={() => setShowFilter(true)}>
         {selectedUserName} <ChevronDown size={16} style={{ marginLeft: 4 }} />

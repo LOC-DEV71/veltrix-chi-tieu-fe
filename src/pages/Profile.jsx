@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import { ArrowLeft, Camera } from 'lucide-react';
 import api from '../services/api';
 import LoadingScreen from '../components/LoadingScreen';

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import BottomNav from '../components/BottomNav';
 import LoadingScreen from '../components/LoadingScreen';
 import { 

@@ -1,18 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import BottomNav from '../components/BottomNav';
-import { User, Palette, Globe, Info, LogOut, ChevronRight, Calendar, Moon, Sun, X, Loader2, Image as ImageIcon, Bell, Sparkles } from 'lucide-react';
+import { User, Palette, Globe, Info, LogOut, ChevronRight, Calendar, Moon, Sun, X, Loader2, Image as ImageIcon, Bell, Sparkles, Settings as SettingsIcon, PlaySquare } from 'lucide-react';
 import Swal from 'sweetalert2';
 import api from '../services/api';
 import './Settings.css';
 
 const Settings = () => {
+  const navigate = useNavigate();
   const { user, logout } = useAuth();
   const { theme, toggleTheme, isAnimating, customBg, updateCustomBg, triggerBgAnimation, finishBgAnimation, cancelBgAnimation } = useTheme();
-  const navigate = useNavigate();
-  const [isUploadingBg, setIsUploadingBg] = React.useState(false);
+  
+  const [isUploadingBg, setIsUploadingBg] = useState(false);
+  const [showAdvancedModal, setShowAdvancedModal] = useState(false);
 
   const handleLogout = async () => {
     const result = await Swal.fire({
@@ -188,25 +190,12 @@ const Settings = () => {
             </div>
           </div>
 
-        {/* Premium Group */}
-        <div className="settings-group" style={{ position: 'relative' }}>
-          <div className="settings-group-title" style={{ 
-            background: 'linear-gradient(90deg, #f59e0b, #fbbf24)', 
-            WebkitBackgroundClip: 'text', 
-            WebkitTextFillColor: 'transparent',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px'
-          }}>
-            <Sparkles size={14} color="#fbbf24" /> Đặc quyền (Premium)
-          </div>
-          
           <div className="settings-row">
             <div className="settings-row-left">
-              <div className="settings-icon-wrapper" style={{ background: 'linear-gradient(135deg, #f59e0b, #ea580c)' }}>
+              <div className="settings-icon-wrapper" style={{ background: 'linear-gradient(135deg, #a855f7, #ec4899)' }}>
                 <ImageIcon size={20} color="#fff" />
               </div>
-              <span className="settings-label">Hình nền động (Video/GIF)</span>
+              <span className="settings-label">Hình nền mờ</span>
             </div>
             <div className="settings-value" style={{ display: 'flex', alignItems: 'center' }}>
               {isUploadingBg ? (
@@ -214,10 +203,10 @@ const Settings = () => {
               ) : (
                 <>
                   <label style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
-                    <span style={{ fontSize: '13px', color: 'var(--text-tertiary)' }}>{customBg ? 'Đã đổi' : 'Tải lên'}</span>
+                    <span style={{ fontSize: '13px', color: 'var(--text-tertiary)' }}>{customBg ? 'Đã đổi' : 'Mặc định'}</span>
                     <input 
                       type="file" 
-                      accept="image/*,video/mp4,video/webm,image/gif" 
+                      accept="image/*" 
                       onChange={handleBgChange}
                       style={{ display: 'none' }}
                     />
@@ -235,7 +224,20 @@ const Settings = () => {
               )}
             </div>
           </div>
-        </div>
+          
+          <div className="settings-row" onClick={() => setShowAdvancedModal(true)}>
+            <div className="settings-row-left">
+              <div className="settings-icon-wrapper" style={{ background: 'linear-gradient(135deg, #f59e0b, #ea580c)' }}>
+                <SettingsIcon size={20} color="#fff" />
+              </div>
+              <span className="settings-label" style={{ fontWeight: 600, background: 'linear-gradient(90deg, #f59e0b, #fbbf24)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                Cài đặt nâng cao
+              </span>
+            </div>
+            <div className="settings-value">
+              <ChevronRight size={18} className="settings-arrow" />
+            </div>
+          </div>
 
           <div className="settings-row" onClick={() => handlePlaceholderClick('Đổi ngôn ngữ')}>
             <div className="settings-row-left">
@@ -303,6 +305,86 @@ const Settings = () => {
           </div>
         </div>
       </div>
+
+      {/* Advanced Settings Modal */}
+      {showAdvancedModal && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+          background: 'rgba(0,0,0,0.7)',
+          backdropFilter: 'blur(10px)',
+          WebkitBackdropFilter: 'blur(10px)',
+          display: 'flex', flexDirection: 'column',
+          zIndex: 9999,
+          padding: '24px 20px',
+          paddingTop: 'max(24px, env(safe-area-inset-top))'
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
+            <h2 style={{ fontSize: '24px', fontWeight: 700, margin: 0, background: 'linear-gradient(90deg, #f59e0b, #fbbf24)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Sparkles size={24} color="#f59e0b" /> Cài đặt nâng cao
+            </h2>
+            <button 
+              onClick={() => setShowAdvancedModal(false)}
+              style={{ background: 'var(--bg-glass)', border: 'var(--glass-border)', borderRadius: '50%', padding: '8px', color: 'white' }}
+            >
+              <X size={20} />
+            </button>
+          </div>
+
+          <div className="glass-panel" style={{ padding: '16px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+              <div style={{ width: '40px', height: '40px', borderRadius: '12px', background: 'linear-gradient(135deg, #f59e0b, #ea580c)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <PlaySquare size={20} color="white" />
+              </div>
+              <div style={{ flex: 1 }}>
+                <h3 style={{ fontSize: '16px', fontWeight: 600, margin: '0 0 4px 0' }}>Hình nền động</h3>
+                <p style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: 0 }}>Hỗ trợ MP4, GIF. Sẽ tự động lặp lại (Loop) dưới nền.</p>
+              </div>
+            </div>
+            
+            {isUploadingBg ? (
+              <div style={{ textAlign: 'center', padding: '20px' }}>
+                <Loader2 size={32} className="animate-spin" style={{ color: '#f59e0b', margin: '0 auto' }} />
+                <p style={{ fontSize: '14px', color: 'var(--text-secondary)', marginTop: '12px' }}>Đang tải lên...</p>
+              </div>
+            ) : (
+              <label style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+                width: '100%', padding: '14px',
+                background: 'rgba(245, 158, 11, 0.1)',
+                border: '1px dashed rgba(245, 158, 11, 0.5)',
+                borderRadius: '12px',
+                color: '#fbbf24',
+                fontWeight: 600,
+                cursor: 'pointer'
+              }}>
+                <ImageIcon size={18} />
+                <span>{customBg ? 'Thay đổi hình nền động' : 'Tải lên Video/GIF'}</span>
+                <input 
+                  type="file" 
+                  accept="image/*,video/mp4,video/webm,image/gif" 
+                  onChange={handleBgChange}
+                  style={{ display: 'none' }}
+                />
+              </label>
+            )}
+            
+            {customBg && !isUploadingBg && (
+              <button 
+                onClick={() => updateCustomBg(null)}
+                style={{
+                  width: '100%', padding: '12px', marginTop: '12px',
+                  background: 'none', border: 'none',
+                  color: 'var(--accent-danger)', fontWeight: 500,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+                  cursor: 'pointer'
+                }}
+              >
+                <X size={16} /> Gỡ bỏ hình nền hiện tại
+              </button>
+            )}
+          </div>
+        </div>
+      )}
 
       <BottomNav />
     </div>

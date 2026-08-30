@@ -27,6 +27,7 @@ import './Home.css';
 
 const Home = () => {
   const { user, logout } = useAuth();
+  const { avatarFrame } = useTheme();
   const navigate = useNavigate();
   const [budget, setBudget] = useState(null);
   const [categories, setCategories] = useState([]);
@@ -156,13 +157,26 @@ const Home = () => {
           </p>
         </div>
         
-        <div className="home-avatar-container">
+        <div className="home-avatar-container" style={{ position: 'relative' }}>
           <img 
             src={user?.avatar || 'https://ui-avatars.com/api/?name=' + (user?.name || 'U') + '&background=6366f1&color=fff'} 
             alt="Avatar" 
             className="home-avatar" 
             onClick={() => setShowAvatarMenu(!showAvatarMenu)}
           />
+          {avatarFrame && (
+            <img 
+              src={`/${avatarFrame}`} 
+              alt="frame" 
+              style={{
+                position: 'absolute',
+                top: '-20%', left: '-20%',
+                width: '140%', height: '140%',
+                pointerEvents: 'none',
+                zIndex: 2
+              }}
+            />
+          )}
           
           {showAvatarMenu && (
             <div className="home-avatar-menu">

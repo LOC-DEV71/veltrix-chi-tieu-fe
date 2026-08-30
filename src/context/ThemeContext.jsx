@@ -5,17 +5,26 @@ const ThemeContext = createContext();
 export const ThemeProvider = ({ children }) => {
   const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'dark');
   const [customBg, setCustomBg] = useState(() => localStorage.getItem('customBg') || null);
+  const [avatarFrame, setAvatarFrame] = useState(() => localStorage.getItem('avatarFrame') || null);
   const [isAnimating, setIsAnimating] = useState(false);
   const [animPhase, setAnimPhase] = useState('idle'); // 'idle' | 'vortex' | 'expand'
   const timerRef = useRef(null);
 
   const updateCustomBg = (url) => {
+    setCustomBg(url);
     if (url) {
-      setCustomBg(url);
       localStorage.setItem('customBg', url);
     } else {
-      setCustomBg(null);
       localStorage.removeItem('customBg');
+    }
+  };
+
+  const updateAvatarFrame = (frameUrl) => {
+    setAvatarFrame(frameUrl);
+    if (frameUrl) {
+      localStorage.setItem('avatarFrame', frameUrl);
+    } else {
+      localStorage.removeItem('avatarFrame');
     }
   };
 
@@ -61,7 +70,13 @@ export const ThemeProvider = ({ children }) => {
   }, []);
 
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme, isAnimating, animPhase, customBg, updateCustomBg, triggerBgAnimation, finishBgAnimation, cancelBgAnimation }}>
+    <ThemeContext.Provider value={{ 
+      theme, toggleTheme, 
+      isAnimating, animPhase, 
+      customBg, updateCustomBg, 
+      avatarFrame, updateAvatarFrame,
+      triggerBgAnimation, finishBgAnimation, cancelBgAnimation 
+    }}>
       {children}
     </ThemeContext.Provider>
   );

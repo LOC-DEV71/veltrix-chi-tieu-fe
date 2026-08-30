@@ -3,15 +3,29 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import BottomNav from '../components/BottomNav';
-import { User, Palette, Globe, Info, LogOut, ChevronRight, Calendar, Moon, Sun, X, Loader2, Image as ImageIcon, Bell, Sparkles, Settings as SettingsIcon, PlaySquare } from 'lucide-react';
+import { User, Palette, Globe, Info, LogOut, ChevronRight, Calendar, Moon, Sun, X, Loader2, Image as ImageIcon, Bell, Sparkles, Settings as SettingsIcon, PlaySquare, Hexagon } from 'lucide-react';
 import Swal from 'sweetalert2';
 import api from '../services/api';
 import './Settings.css';
 
+const AVATAR_FRAMES = [
+  'ao-giac.png', 'ao-mong-sac-dem.png', 'bach-duong.png', 'buom-tung-bay.png',
+  'canh-tien.png', 'cau-vong-vu-tru.png', 'chin-tang-may.png', 'chococat.png',
+  'cinnamoroll.png', 'cong-suy-ngam.png', 'dam-may-dong.png', 'do-mo-hoi.png',
+  'gian-du.png', 'gio-ke-chuyen.png', 'hello-kitty.png', 'hoa-hong-den.png',
+  'hoa-hong-hac-am.png', 'hoa-hong-trang.png', 'hoa-linh-lan.png', 
+  'hoa-quang-dien-thach-anh.png', 'hoang-hon-chang-vang.png', 'hoang-hon-xanh-lam.png'
+];
+
 const Settings = () => {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
-  const { theme, toggleTheme, isAnimating, customBg, updateCustomBg, triggerBgAnimation, finishBgAnimation, cancelBgAnimation } = useTheme();
+  const { 
+    theme, toggleTheme, isAnimating, 
+    customBg, updateCustomBg, 
+    avatarFrame, updateAvatarFrame,
+    triggerBgAnimation, finishBgAnimation, cancelBgAnimation 
+  } = useTheme();
   
   const [isUploadingBg, setIsUploadingBg] = useState(false);
   const [showAdvancedModal, setShowAdvancedModal] = useState(false);
@@ -318,7 +332,8 @@ const Settings = () => {
           display: 'flex', flexDirection: 'column',
           zIndex: 9999,
           padding: '24px 20px',
-          paddingTop: 'max(24px, env(safe-area-inset-top))'
+          paddingTop: 'max(24px, env(safe-area-inset-top))',
+          overflowY: 'auto'
         }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
             <h2 style={{ fontSize: '24px', fontWeight: 700, margin: 0, background: 'linear-gradient(90deg, #f59e0b, #fbbf24)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -384,6 +399,57 @@ const Settings = () => {
                 <X size={16} /> Gỡ bỏ hình nền hiện tại
               </button>
             )}
+          </div>
+          
+          {/* Avatar Frames Selection */}
+          <div className="glass-panel" style={{ padding: '16px', marginTop: '16px', marginBottom: '40px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+              <div style={{ width: '40px', height: '40px', borderRadius: '12px', background: 'linear-gradient(135deg, #10b981, #059669)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Hexagon size={20} color="white" />
+              </div>
+              <div style={{ flex: 1 }}>
+                <h3 style={{ fontSize: '16px', fontWeight: 600, margin: '0 0 4px 0' }}>Khung đại diện động</h3>
+                <p style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: 0 }}>Chọn khung để làm nổi bật Avatar của bạn.</p>
+              </div>
+            </div>
+            
+            <div style={{ 
+              display: 'grid', 
+              gridTemplateColumns: 'repeat(4, 1fr)', 
+              gap: '12px',
+              maxHeight: '300px',
+              overflowY: 'auto',
+              padding: '4px'
+            }}>
+              <div 
+                onClick={() => updateAvatarFrame(null)}
+                style={{ 
+                  aspectRatio: '1', borderRadius: '50%', 
+                  background: 'rgba(255,255,255,0.1)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  cursor: 'pointer',
+                  border: avatarFrame === null ? '2px solid #10b981' : '2px solid transparent'
+                }}
+              >
+                <X size={24} color="var(--text-secondary)" />
+              </div>
+              
+              {AVATAR_FRAMES.map(frame => (
+                <div 
+                  key={frame}
+                  onClick={() => updateAvatarFrame(frame)}
+                  style={{
+                    aspectRatio: '1', borderRadius: '50%',
+                    background: '#000',
+                    cursor: 'pointer',
+                    position: 'relative',
+                    border: avatarFrame === frame ? '2px solid #10b981' : '2px solid transparent'
+                  }}
+                >
+                  <img src={`/${frame}`} alt={frame} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       )}

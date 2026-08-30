@@ -9,6 +9,7 @@ import './Profile.css';
 
 const Profile = () => {
   const { user, updateUser } = useAuth();
+  const { avatarFrame } = useTheme();
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
   
@@ -120,6 +121,19 @@ const Profile = () => {
               alt="Avatar" 
               className="profile-avatar"
             />
+            {avatarFrame && (
+              <img 
+                src={`/${avatarFrame}`} 
+                alt="frame" 
+                style={{
+                  position: 'absolute',
+                  top: '-20%', left: '-20%',
+                  width: '140%', height: '140%',
+                  pointerEvents: 'none',
+                  zIndex: 2
+                }}
+              />
+            )}
             <div className="profile-avatar-overlay">
               <Camera size={24} />
             </div>

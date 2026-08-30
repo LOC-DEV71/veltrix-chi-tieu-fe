@@ -43,7 +43,7 @@ const AppRoutes = () => {
 
   return (
     <>
-      {/* Background Image Layer */}
+      {/* Background Layer */}
       {customBg && (
         <div style={{
           position: 'fixed',
@@ -53,13 +53,30 @@ const AppRoutes = () => {
           width: '100%',
           maxWidth: '480px',
           height: '100vh',
-          backgroundImage: `url(${customBg})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
           opacity: theme === 'dark' ? 0.15 : 0.08,
           zIndex: -1,
-          pointerEvents: 'none'
-        }} />
+          pointerEvents: 'none',
+          overflow: 'hidden'
+        }}>
+          {customBg.includes('/video/upload/') || customBg.match(/\.(mp4|webm)$/i) ? (
+            <video 
+              src={customBg} 
+              autoPlay 
+              loop 
+              muted 
+              playsInline 
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            />
+          ) : (
+            <div style={{
+              width: '100%',
+              height: '100%',
+              backgroundImage: `url(${customBg})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+            }} />
+          )}
+        </div>
       )}
       <PushNotificationManager user={user} />
       <Routes>

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import BottomNav from '../components/BottomNav';
-import { User, Palette, Globe, Info, LogOut, ChevronRight, Calendar, Moon, Sun, X, Loader2, Image as ImageIcon, Bell } from 'lucide-react';
+import { User, Palette, Globe, Info, LogOut, ChevronRight, Calendar, Moon, Sun, X, Loader2, Image as ImageIcon, Bell, Sparkles } from 'lucide-react';
 import Swal from 'sweetalert2';
 import api from '../services/api';
 import './Settings.css';
@@ -188,12 +188,25 @@ const Settings = () => {
             </div>
           </div>
 
+        {/* Premium Group */}
+        <div className="settings-group" style={{ position: 'relative' }}>
+          <div className="settings-group-title" style={{ 
+            background: 'linear-gradient(90deg, #f59e0b, #fbbf24)', 
+            WebkitBackgroundClip: 'text', 
+            WebkitTextFillColor: 'transparent',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px'
+          }}>
+            <Sparkles size={14} color="#fbbf24" /> Đặc quyền (Premium)
+          </div>
+          
           <div className="settings-row">
             <div className="settings-row-left">
-              <div className="settings-icon-wrapper" style={{ background: 'linear-gradient(135deg, #a855f7, #ec4899)' }}>
+              <div className="settings-icon-wrapper" style={{ background: 'linear-gradient(135deg, #f59e0b, #ea580c)' }}>
                 <ImageIcon size={20} color="#fff" />
               </div>
-              <span className="settings-label">Hình nền mờ</span>
+              <span className="settings-label">Hình nền động (Video/GIF)</span>
             </div>
             <div className="settings-value" style={{ display: 'flex', alignItems: 'center' }}>
               {isUploadingBg ? (
@@ -201,10 +214,10 @@ const Settings = () => {
               ) : (
                 <>
                   <label style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
-                    <span style={{ fontSize: '13px', color: 'var(--text-tertiary)' }}>{customBg ? 'Đã đổi' : 'Mặc định'}</span>
+                    <span style={{ fontSize: '13px', color: 'var(--text-tertiary)' }}>{customBg ? 'Đã đổi' : 'Tải lên'}</span>
                     <input 
                       type="file" 
-                      accept="image/*" 
+                      accept="image/*,video/mp4,video/webm,image/gif" 
                       onChange={handleBgChange}
                       style={{ display: 'none' }}
                     />
@@ -222,6 +235,7 @@ const Settings = () => {
               )}
             </div>
           </div>
+        </div>
 
           <div className="settings-row" onClick={() => handlePlaceholderClick('Đổi ngôn ngữ')}>
             <div className="settings-row-left">

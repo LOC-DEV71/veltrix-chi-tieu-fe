@@ -12,6 +12,7 @@ const FriendsModal = ({ onClose }) => {
   const [myFriendId, setMyFriendId] = useState('');
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [selectedFriendProfile, setSelectedFriendProfile] = useState(null);
 
   // Drag to dismiss state
   const [offsetY, setOffsetY] = useState(0);
@@ -214,6 +215,59 @@ const FriendsModal = ({ onClose }) => {
 
   return (
     <div className="friends-modal-overlay" onClick={onClose}>
+      {selectedFriendProfile ? (
+        <div 
+          className="friend-profile-modal" 
+          onClick={e => e.stopPropagation()}
+          style={{
+            width: '100%', maxWidth: '480px', height: '100%',
+            background: selectedFriendProfile.customBg ? `url(${selectedFriendProfile.customBg}) center/cover no-repeat` : 'var(--bg-primary)',
+            position: 'relative',
+            display: 'flex', flexDirection: 'column'
+          }}
+        >
+          {/* Overlay to darken background if there is a customBg */}
+          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', zIndex: 0 }} />
+          
+          <div style={{ position: 'relative', zIndex: 1, padding: '20px', paddingTop: 'calc(20px + env(safe-area-inset-top))' }}>
+            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '40px' }}>
+              <button onClick={() => setSelectedFriendProfile(null)} style={{ background: 'rgba(255,255,255,0.1)', border: 'none', borderRadius: '50%', width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', cursor: 'pointer' }}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+              </button>
+              <h3 style={{ flex: 1, textAlign: 'center', margin: 0, color: '#fff', fontSize: '18px', marginRight: '40px' }}>Hồ sơ người dùng</h3>
+            </div>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <div style={{ position: 'relative', width: '120px', height: '120px', marginBottom: '20px' }}>
+                {selectedFriendProfile.avatar ? (
+                  <img src={selectedFriendProfile.avatar} alt="avatar" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
+                ) : (
+                  <div style={{ width: '100%', height: '100%', borderRadius: '50%', background: 'var(--accent-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '3rem', color: '#fff', fontWeight: 'bold' }}>
+                    {selectedFriendProfile.name?.charAt(0) || '?'}
+                  </div>
+                )}
+                {selectedFriendProfile.avatarFrame && (
+                  <img src={`/${selectedFriendProfile.avatarFrame}`} alt="frame" style={{ position: 'absolute', top: '-20%', left: '-20%', width: '140%', height: '140%', pointerEvents: 'none', zIndex: 2 }} />
+                )}
+              </div>
+              <h2 style={{ margin: 0, color: '#fff', fontSize: '24px', fontWeight: 'bold', marginBottom: '8px' }}>{selectedFriendProfile.name}</h2>
+              <p style={{ margin: 0, color: 'rgba(255,255,255,0.7)', fontSize: '14px' }}>{selectedFriendProfile.email}</p>
+              
+              <div style={{ width: '100%', maxWidth: '300px', marginTop: '40px', background: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(10px)', borderRadius: '16px', padding: '20px', display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                <div>
+                  <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: '12px', marginBottom: '4px' }}>Tên hiển thị</div>
+                  <div style={{ color: '#fff', fontSize: '16px' }}>{selectedFriendProfile.name}</div>
+                </div>
+                <div style={{ height: '1px', background: 'rgba(255,255,255,0.1)' }} />
+                <div>
+                  <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: '12px', marginBottom: '4px' }}>Email</div>
+                  <div style={{ color: '#fff', fontSize: '16px' }}>{selectedFriendProfile.email}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : (
       <div 
         className="friends-modal" 
         onClick={e => e.stopPropagation()}
@@ -272,7 +326,7 @@ const FriendsModal = ({ onClose }) => {
                 <div className="empty-state">Bạn chưa có người bạn nào. Hãy qua mục "Tìm bạn" nhé!</div>
               ) : (
                 friends.map(f => (
-                  <div key={f._id} className="friend-item">
+                  <div key={f._id} className="friend-item" onClick={() => setSelectedFriendProfile(f)}>
                     <div style={{ position: 'relative', width: '44px', height: '44px', flexShrink: 0 }}>
                       {f.avatar ? (
                         <img src={f.avatar} alt="Avatar" className="f-avatar" />
@@ -280,14 +334,14 @@ const FriendsModal = ({ onClose }) => {
                         <div className="f-avatar-placeholder">{f.name.charAt(0)}</div>
                       )}
                       {f.avatarFrame && (
-                        <img src={`/${f.avatarFrame}`} alt="frame" style={{ position: 'absolute', top: '-20%', left: '-20%', width: '140%', height: '140%', pointerEvents: 'none' }} />
+                        <img src={`/${f.avatarFrame}`} alt="frame" style={{ position: 'absolute', top: '-20%', left: '-20%', width: '140%', height: '140%', pointerEvents: 'none', zIndex: 2 }} />
                       )}
                     </div>
                     <div className="f-info">
                       <div className="f-name">{f.name}</div>
                       <div className="f-email">{f.email}</div>
                     </div>
-                    <button className="remove-btn" onClick={() => removeFriend(f._id)}>✕</button>
+                    <button className="remove-btn" onClick={(e) => { e.stopPropagation(); removeFriend(f._id); }}>✕</button>
                   </div>
                 ))
               )}
@@ -322,7 +376,7 @@ const FriendsModal = ({ onClose }) => {
               </form>
               <div className="search-results">
                 {!loading && searchResults.map(u => (
-                  <div key={u._id} className="friend-item">
+                  <div key={u._id} className="friend-item" onClick={() => setSelectedFriendProfile(u)}>
                     <div style={{ position: 'relative', width: '44px', height: '44px', flexShrink: 0 }}>
                       {u.avatar ? (
                         <img src={u.avatar} alt="Avatar" className="f-avatar" />
@@ -330,14 +384,14 @@ const FriendsModal = ({ onClose }) => {
                         <div className="f-avatar-placeholder">{u.name.charAt(0)}</div>
                       )}
                       {u.avatarFrame && (
-                        <img src={`/${u.avatarFrame}`} alt="frame" style={{ position: 'absolute', top: '-20%', left: '-20%', width: '140%', height: '140%', pointerEvents: 'none' }} />
+                        <img src={`/${u.avatarFrame}`} alt="frame" style={{ position: 'absolute', top: '-20%', left: '-20%', width: '140%', height: '140%', pointerEvents: 'none', zIndex: 2 }} />
                       )}
                     </div>
                     <div className="f-info">
                       <div className="f-name">{u.name}</div>
                       <div className="f-email">{u.email}</div>
                     </div>
-                    <button className="add-btn" onClick={() => sendRequest(u._id)}>Kết bạn</button>
+                    <button className="add-btn" onClick={(e) => { e.stopPropagation(); sendRequest(u._id); }}>Kết bạn</button>
                   </div>
                 ))}
               </div>
@@ -351,7 +405,7 @@ const FriendsModal = ({ onClose }) => {
                 <div className="empty-state">Không có lời mời nào.</div>
               ) : (
                 requests.map(req => (
-                  <div key={req._id} className="friend-item">
+                  <div key={req._id} className="friend-item" onClick={() => setSelectedFriendProfile(req.sender)}>
                     <div style={{ position: 'relative', width: '44px', height: '44px', flexShrink: 0 }}>
                       {req.sender?.avatar ? (
                         <img src={req.sender.avatar} alt="Avatar" className="f-avatar" />
@@ -359,7 +413,7 @@ const FriendsModal = ({ onClose }) => {
                         <div className="f-avatar-placeholder">{req.sender?.name?.charAt(0)}</div>
                       )}
                       {req.sender?.avatarFrame && (
-                        <img src={`/${req.sender.avatarFrame}`} alt="frame" style={{ position: 'absolute', top: '-20%', left: '-20%', width: '140%', height: '140%', pointerEvents: 'none' }} />
+                        <img src={`/${req.sender.avatarFrame}`} alt="frame" style={{ position: 'absolute', top: '-20%', left: '-20%', width: '140%', height: '140%', pointerEvents: 'none', zIndex: 2 }} />
                       )}
                     </div>
                     <div className="f-info">
@@ -367,8 +421,8 @@ const FriendsModal = ({ onClose }) => {
                       <div className="f-email">muốn kết bạn với bạn</div>
                     </div>
                     <div className="action-btns">
-                      <button className="accept-btn" onClick={() => respondRequest(req._id, 'accept')}>Đồng ý</button>
-                      <button className="reject-btn" onClick={() => respondRequest(req._id, 'reject')}>Từ chối</button>
+                      <button className="accept-btn" onClick={(e) => { e.stopPropagation(); respondRequest(req._id, 'accept'); }}>Đồng ý</button>
+                      <button className="reject-btn" onClick={(e) => { e.stopPropagation(); respondRequest(req._id, 'reject'); }}>Từ chối</button>
                     </div>
                   </div>
                 ))
@@ -377,6 +431,7 @@ const FriendsModal = ({ onClose }) => {
           )}
         </div>
       </div>
+      )}
     </div>
   );
 };

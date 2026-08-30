@@ -47,7 +47,7 @@
 .pin-title {
   font-size: 20px;
   font-weight: 700;
-  color: #fff;
+  color: var(--text-primary);
   margin-bottom: 8px;
 }
 
@@ -67,13 +67,13 @@
   width: 16px;
   height: 16px;
   border-radius: 50%;
-  border: 2px solid rgba(255, 255, 255, 0.2);
+  border: 2px solid var(--text-muted, #9ca3af);
   transition: all 0.2s ease;
 }
 
 .pin-dot.filled {
-  background-color: #818cf8;
-  border-color: #818cf8;
+  background-color: var(--primary-color, #818cf8);
+  border-color: var(--primary-color, #818cf8);
   box-shadow: 0 0 10px rgba(129, 140, 248, 0.5);
   transform: scale(1.1);
 }
@@ -109,9 +109,9 @@
   width: 72px;
   height: 72px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: #fff;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
   font-size: 28px;
   font-weight: 500;
   display: flex;
@@ -123,7 +123,7 @@
 }
 
 .numpad-btn:active {
-  background: rgba(255, 255, 255, 0.15);
+  background: var(--bg-hover);
   transform: scale(0.95);
 }
 
@@ -139,5 +139,5 @@
 }
 
 .numpad-btn.action-btn:active {
-  color: #fff;
+  color: var(--text-primary);
 }

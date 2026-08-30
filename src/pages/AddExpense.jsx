@@ -4,9 +4,13 @@ import { Camera, X, Check, Loader2 } from 'lucide-react';
 import api from '../services/api';
 import LoadingScreen from '../components/LoadingScreen';
 import Swal from 'sweetalert2';
+import { useAuth } from '../context/AuthContext';
+import PinScreen from '../components/PinScreen';
 
 const AddExpense = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const [showPinConfirm, setShowPinConfirm] = useState(false);
   const [amount, setAmount] = useState('');
   const [note, setNote] = useState('');
   const [categoryId, setCategoryId] = useState('');
@@ -81,10 +85,18 @@ const AddExpense = () => {
     );
   }
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     if (!amount || !categoryId) return;
     
+    if (user?.hasPin) {
+      setShowPinConfirm(true);
+    } else {
+      executeSubmit();
+    }
+  };
+
+  const executeSubmit = async () => {
     setIsSubmitting(true);
     
     try {
@@ -197,15 +209,28 @@ const AddExpense = () => {
   };
 
   return (
-    <div style={styles.container}>
-      {/* Header */}
-      <div style={styles.header}>
-        <button style={styles.iconBtn} onClick={() => navigate(-1)}>
-          <X size={24} color="var(--text-primary)" />
-        </button>
-        <h2 style={styles.title}>Thêm chi tiêu</h2>
-        <div style={{width: '40px'}}></div>
-      </div>
+    <>
+      {showPinConfirm && (
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 99999 }}>
+          <PinScreen 
+            mode="confirm" 
+            onSuccess={() => {
+              setShowPinConfirm(false);
+              executeSubmit();
+            }}
+            onCancel={() => setShowPinConfirm(false)}
+          />
+        </div>
+      )}
+      <div style={styles.container}>
+        {/* Header */}
+        <div style={styles.header}>
+          <button type="button" style={styles.iconBtn} onClick={() => navigate(-1)}>
+            <X size={24} color="var(--text-primary)" />
+          </button>
+          <h2 style={styles.title}>Thêm chi tiêu</h2>
+          <div style={{width: '40px'}}></div>
+        </div>
 
       {!budgetId ? (
         <div style={{ 
@@ -396,6 +421,7 @@ const AddExpense = () => {
       </form>
       )}
     </div>
+    </>
   );
 };
 

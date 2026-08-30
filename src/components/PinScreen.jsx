@@ -2,14 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import './PinScreen.css';
-import { Lock, Delete, Fingerprint } from 'lucide-react';
+import { Lock, Delete, Fingerprint, X } from 'lucide-react';
 import Swal from 'sweetalert2';
 
-const PinScreen = () => {
+const PinScreen = ({ mode = 'lock', onSuccess, onCancel }) => {
   const { user, setPinVerified, updateUser } = useAuth();
   const [pin, setPin] = useState('');
   const [confirmPin, setConfirmPin] = useState('');
-  const [step, setStep] = useState(user?.hasPin ? 'verify' : 'setup-1');
+  const [step, setStep] = useState(mode === 'confirm' ? 'verify' : (user?.hasPin ? 'verify' : 'setup-1'));
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -74,7 +74,11 @@ const PinScreen = () => {
     try {
       setLoading(true);
       await api.post('/auth/verify-pin', { pin: enteredPin });
-      setPinVerified(true);
+      if (mode === 'confirm') {
+        if (onSuccess) onSuccess();
+      } else {
+        setPinVerified(true);
+      }
     } catch (err) {
       triggerError();
       setPin('');
@@ -86,7 +90,6 @@ const PinScreen = () => {
   const handleKeyPress = (num) => {
     if (pin.length < 6) {
       setPin(prev => prev + num);
-      // Haptic feedback if available
       if (window.navigator && window.navigator.vibrate) {
         window.navigator.vibrate(50);
       }
@@ -98,7 +101,7 @@ const PinScreen = () => {
   };
 
   const getTitleText = () => {
-    if (step === 'verify') return 'Nhập mã PIN để mở khóa';
+    if (step === 'verify') return 'Nhập mã PIN để xác nhận';
     if (step === 'setup-1') return 'Thiết lập mã PIN 6 số';
     if (step === 'setup-2') return 'Xác nhận lại mã PIN';
     return '';
@@ -107,13 +110,22 @@ const PinScreen = () => {
   return (
     <div className="pin-screen-overlay">
       <div className="pin-container">
+        {onCancel && (
+          <button 
+            onClick={onCancel} 
+            className="pin-close-btn"
+            style={{ position: 'absolute', top: 20, right: 20, background: 'none', border: 'none', color: 'var(--text-primary)', cursor: 'pointer' }}
+          >
+            <X size={28} />
+          </button>
+        )}
         <div className="pin-header">
           <div className="pin-icon">
             <Lock size={32} color="#818cf8" />
           </div>
           <h2 className="pin-title">{getTitleText()}</h2>
           <p className="pin-subtitle">
-            {step === 'verify' ? 'Veltrix bảo vệ dữ liệu của bạn an toàn tuyệt đối' : 'Mã này sẽ được dùng để mở khóa ứng dụng của bạn'}
+            {step === 'verify' ? (mode === 'confirm' ? 'Xác thực để hoàn tất giao dịch' : 'Veltrix bảo vệ dữ liệu của bạn an toàn tuyệt đối') : 'Mã này sẽ được dùng để mở khóa ứng dụng của bạn'}
           </p>
         </div>
 

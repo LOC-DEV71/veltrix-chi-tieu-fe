@@ -22,7 +22,6 @@ const Settings = () => {
   const { user, logout } = useAuth();
   const { 
     theme, toggleTheme, isAnimating, 
-    customBg, updateCustomBg, 
     triggerBgAnimation, finishBgAnimation, cancelBgAnimation 
   } = useTheme();
   
@@ -80,7 +79,9 @@ const Settings = () => {
       const uploadRes = await api.post('/uploads/receipt', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
-      updateCustomBg(uploadRes.data.url);
+      const bgUrl = uploadRes.data.url;
+      const res = await api.put('/auth/profile', { customBg: bgUrl });
+      updateUser(res.data);
       finishBgAnimation();
     } catch (err) {
       Swal.fire('Lỗi', 'Không thể tải ảnh lên', 'error');
@@ -234,7 +235,7 @@ const Settings = () => {
               ) : (
                 <>
                   <label style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
-                    <span style={{ fontSize: '13px', color: 'var(--text-tertiary)' }}>{customBg ? 'Đã đổi' : 'Mặc định'}</span>
+                    <span style={{ fontSize: '13px', color: 'var(--text-tertiary)' }}>{user?.customBg ? 'Đã đổi' : 'Mặc định'}</span>
                     <input 
                       type="file" 
                       accept="image/*" 
@@ -242,9 +243,15 @@ const Settings = () => {
                       style={{ display: 'none' }}
                     />
                   </label>
-                  {customBg && (
+                  {user?.customBg && (
                     <button 
-                      onClick={(e) => { e.stopPropagation(); updateCustomBg(null); }}
+                      onClick={async (e) => { 
+                        e.stopPropagation(); 
+                        try {
+                          const res = await api.put('/auth/profile', { customBg: 'null' });
+                          updateUser(res.data);
+                        } catch(err) { Swal.fire('Lỗi', 'Không thể xóa hình nền', 'error'); }
+                      }}
                       style={{ background: 'none', border: 'none', padding: '4px', cursor: 'pointer', marginLeft: '8px', color: 'var(--accent-danger)' }}
                       title="Xóa hình nền"
                     >
@@ -392,7 +399,7 @@ const Settings = () => {
                 cursor: 'pointer'
               }}>
                 <ImageIcon size={18} />
-                <span>{customBg ? 'Thay đổi hình nền động' : 'Tải lên Video/GIF'}</span>
+                <span>{user?.customBg ? 'Thay đổi hình nền động' : 'Tải lên Video/GIF'}</span>
                 <input 
                   type="file" 
                   accept="image/*,video/mp4,video/webm,video/quicktime,.mov,image/gif" 
@@ -402,9 +409,14 @@ const Settings = () => {
               </label>
             )}
             
-            {customBg && !isUploadingBg && (
+            {user?.customBg && !isUploadingBg && (
               <button 
-                onClick={() => updateCustomBg(null)}
+                onClick={async () => {
+                  try {
+                    const res = await api.put('/auth/profile', { customBg: 'null' });
+                    updateUser(res.data);
+                  } catch(err) { Swal.fire('Lỗi', 'Không thể xóa hình nền', 'error'); }
+                }}
                 style={{
                   width: '100%', padding: '12px', marginTop: '12px',
                   background: 'none', border: 'none',

@@ -59,8 +59,20 @@ const AddFriend = () => {
   if (loading) return <div className="add-friend-container"><div className="loading">Đang tải...</div></div>;
 
   return (
-    <div className="add-friend-container">
-      <div className="add-friend-card">
+    <div className="add-friend-container" style={{ position: 'relative', overflow: 'hidden' }}>
+      {friendUser?.customBg && (
+        <div style={{
+          position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
+          zIndex: 0, opacity: 0.3, pointerEvents: 'none'
+        }}>
+          {friendUser.customBg.includes('/video/upload/') || friendUser.customBg.match(/\.(mp4|webm|mov)$/i) ? (
+            <video src={friendUser.customBg} autoPlay loop muted playsInline style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          ) : (
+            <div style={{ width: '100%', height: '100%', backgroundImage: `url(${friendUser.customBg})`, backgroundSize: 'cover', backgroundPosition: 'center' }} />
+          )}
+        </div>
+      )}
+      <div className="add-friend-card" style={{ position: 'relative', zIndex: 1 }}>
         {error ? (
           <div className="error-message">
             <p>{error}</p>

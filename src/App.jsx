@@ -37,14 +37,14 @@ const ProtectedRoute = ({ children }) => {
 
 const AppRoutes = () => {
   const { user, loading } = useAuth();
-  const { customBg, theme } = useTheme();
+  const { theme } = useTheme();
 
   if (loading) return <LoadingScreen />;
 
   return (
     <>
       {/* Background Layer */}
-      {customBg && (
+      {user?.customBg && (
         <div style={{
           position: 'fixed',
           top: 0, 
@@ -58,9 +58,9 @@ const AppRoutes = () => {
           pointerEvents: 'none',
           overflow: 'hidden'
         }}>
-          {customBg.includes('/video/upload/') || customBg.match(/\.(mp4|webm|mov)$/i) ? (
+          {user.customBg.includes('/video/upload/') || user.customBg.match(/\.(mp4|webm|mov)$/i) ? (
             <video 
-              src={customBg} 
+              src={user.customBg} 
               autoPlay 
               loop 
               muted 
@@ -68,13 +68,16 @@ const AppRoutes = () => {
               style={{ width: '100%', height: '100%', objectFit: 'cover' }}
             />
           ) : (
-            <div style={{
-              width: '100%',
-              height: '100%',
-              backgroundImage: `url(${customBg})`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-            }} />
+            <div 
+              className="bg-image" 
+              style={{ 
+                width: '100%',
+                height: '100%',
+                backgroundImage: `url(${user.customBg})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+              }} 
+            />
           )}
         </div>
       )}

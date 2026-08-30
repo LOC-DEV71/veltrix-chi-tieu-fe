@@ -4,18 +4,13 @@ const ThemeContext = createContext();
 
 export const ThemeProvider = ({ children }) => {
   const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'dark');
-  const [customBg, setCustomBg] = useState(() => localStorage.getItem('customBg') || null);
+  const [customBg, setCustomBg] = useState(null);
   const [isAnimating, setIsAnimating] = useState(false);
   const [animPhase, setAnimPhase] = useState('idle'); // 'idle' | 'vortex' | 'expand'
   const timerRef = useRef(null);
 
   const updateCustomBg = (url) => {
     setCustomBg(url);
-    if (url) {
-      localStorage.setItem('customBg', url);
-    } else {
-      localStorage.removeItem('customBg');
-    }
   };
 
   const toggleTheme = useCallback(() => {

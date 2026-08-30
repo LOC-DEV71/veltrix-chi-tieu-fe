@@ -271,11 +271,26 @@ const Feed = () => {
           </div>
           {displayUsers.map(u => (
             <div key={u._id} className="locket-filter-item" onClick={() => { setSelectedUserId(u._id); setShowFilter(false); }}>
-              {u.avatar ? (
-                <img src={u.avatar} alt={u.name} className="locket-filter-avatar" />
-              ) : (
-                <div className="locket-filter-avatar" style={{ background: '#555' }}>{u.name?.charAt(0) || '?'}</div>
-              )}
+              <div style={{ position: 'relative', width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                {u.avatar ? (
+                  <img src={u.avatar} alt={u.name} className="locket-filter-avatar" style={{ margin: 0, width: '100%', height: '100%' }} />
+                ) : (
+                  <div className="locket-filter-avatar" style={{ background: '#555', margin: 0, width: '100%', height: '100%' }}>{u.name?.charAt(0) || '?'}</div>
+                )}
+                {u.avatarFrame && (
+                  <img 
+                    src={`/${u.avatarFrame}`} 
+                    alt="frame" 
+                    style={{
+                      position: 'absolute',
+                      top: '-20%', left: '-20%',
+                      width: '140%', height: '140%',
+                      pointerEvents: 'none',
+                      zIndex: 2
+                    }}
+                  />
+                )}
+              </div>
               <span>{u._id === user?._id ? 'Bạn' : u.name}</span>
               {selectedUserId === u._id && <span className="locket-filter-check">✓</span>}
             </div>
@@ -294,11 +309,26 @@ const Feed = () => {
           {/* Người thả tim */}
           {selectedReactionTx.reactions?.map((r, idx) => (
             <div key={`react-${idx}`} className="locket-reaction-item">
-              {r.user?.avatar ? (
-                <img src={r.user.avatar} alt={r.user.name} className="locket-reaction-item-avatar" />
-              ) : (
-                <div className="locket-reaction-item-avatar placeholder">{r.user?.name?.charAt(0) || '?'}</div>
-              )}
+              <div style={{ position: 'relative', width: '40px', height: '40px' }}>
+                {r.user?.avatar ? (
+                  <img src={r.user.avatar} alt={r.user.name} className="locket-reaction-item-avatar" style={{ margin: 0, width: '100%', height: '100%' }} />
+                ) : (
+                  <div className="locket-reaction-item-avatar placeholder" style={{ margin: 0, width: '100%', height: '100%' }}>{r.user?.name?.charAt(0) || '?'}</div>
+                )}
+                {r.user?.avatarFrame && (
+                  <img 
+                    src={`/${r.user.avatarFrame}`} 
+                    alt="frame" 
+                    style={{
+                      position: 'absolute',
+                      top: '-20%', left: '-20%',
+                      width: '140%', height: '140%',
+                      pointerEvents: 'none',
+                      zIndex: 2
+                    }}
+                  />
+                )}
+              </div>
               <span className="locket-reaction-item-name">{r.user?.name || 'Ai đó'}</span>
               <span className="locket-reaction-item-icon">{r.type === 'heart' ? '❤️' : (r.type || '💛')}</span>
             </div>
@@ -308,11 +338,26 @@ const Feed = () => {
             !selectedReactionTx.reactions?.some(r => r.user?._id === v._id)
           ).map((v, idx) => (
             <div key={`view-${idx}`} className="locket-reaction-item">
-              {v?.avatar ? (
-                <img src={v.avatar} alt={v.name} className="locket-reaction-item-avatar" />
-              ) : (
-                <div className="locket-reaction-item-avatar placeholder">{v?.name?.charAt(0) || '?'}</div>
-              )}
+              <div style={{ position: 'relative', width: '40px', height: '40px' }}>
+                {v?.avatar ? (
+                  <img src={v.avatar} alt={v.name} className="locket-reaction-item-avatar" style={{ margin: 0, width: '100%', height: '100%' }} />
+                ) : (
+                  <div className="locket-reaction-item-avatar placeholder" style={{ margin: 0, width: '100%', height: '100%' }}>{v?.name?.charAt(0) || '?'}</div>
+                )}
+                {v?.avatarFrame && (
+                  <img 
+                    src={`/${v.avatarFrame}`} 
+                    alt="frame" 
+                    style={{
+                      position: 'absolute',
+                      top: '-20%', left: '-20%',
+                      width: '140%', height: '140%',
+                      pointerEvents: 'none',
+                      zIndex: 2
+                    }}
+                  />
+                )}
+              </div>
               <span className="locket-reaction-item-name">{v?.name || 'Ai đó'}</span>
               <span className="locket-reaction-item-icon" style={{ opacity: 0.5 }}>👁️</span>
             </div>

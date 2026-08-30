@@ -121,6 +121,12 @@ const AiChat = () => {
   const currentAudioRef = useRef(null);
 
   const handlePlayAudio = async (msgId, text) => {
+    // 1. Tạo audio ngay lập tức trong event loop đồng bộ để bypass iOS Safari
+    const audio = new Audio();
+    // Âm thanh rỗng ngắn nhất để unlock autoplay trên mobile
+    audio.src = 'data:audio/mp3;base64,SUQzBAAAAAABEVRYWFgAAAAtAAADY29tbWVudABCaWdTb3VuZEJhbmsuY29tIC8gRmFjZWJvb2suY29tL0JpZ1NvdW5kQmFuawBUWFhYAAAAQQAABXNvZnR3YXJlAExBVkM1Ny41Ni4xMDD/vw7GQABAA/wAEMBwA+QA//78OxmoRwwEA/wEAACkAQAAAAAP///8f/x//L8OxlQQwwF//0AAABgAP//0//w//9/////8Oxl4SQwF//xQAACkAQAAAAAP/78Oxm8PQwF//xgAACgAQAAAAAP///8f/x//L8OxlQQwwF//0AAABgAP//0//w//9/////8Oxl4SQwF//xQAACkAQAAAAAP/78Oxm8PQwF//xgAACgAQAAAAAP///8f/x//L8OxlQQwwF//0AAABgAP//0//w//9/////8Oxl4SQwF//xQAACkAQAAAAAP/78Oxm8PQwF//xgAACgAQAAAAAP///8f/x//L8OxlQQwwF//0AAABgAP//0//w//9/////8Oxl4SQwF//xQAACkAQAAAAAP/78Oxm8PQwF//xgAACgAQAAAAAP///8f/x//L8OxvIAQwwEAAwAAABAAMAAAMwAAAAA//78OxmURRAEA/wEAAAUAQAAAAAP/78OxosTwwF//xQAABgAP//0//w//9/////8OxqARQwEA/wEAAAUAQAAAAAP/78OxsISQwEA/wEAAAUAQAAAAAP/78OxtgQwwEAAwAAABAAMAAAMwAAAAA//78OxxERRAEA/wEAAAUAQAAAAAP/78OxyUSQwF//wEAABgAP//0//w//9/////8O';
+    audio.play().catch(() => {});
+
     // Dừng nếu đang phát cùng message
     if (playingMsgId === msgId) {
       playingRef.current = false;
@@ -157,7 +163,7 @@ const AiChat = () => {
       if (!playingRef.current) return; // Nếu user đã ấn tắt trong lúc đang tải
 
       const audioUrl = URL.createObjectURL(response.data);
-      const audio = new Audio(audioUrl);
+      audio.src = audioUrl; // Gán lại src cho cái audio đã được unlock
       
       audio.playbackRate = 1.5; // Tua 1.5x chính xác bằng code
       currentAudioRef.current = audio;

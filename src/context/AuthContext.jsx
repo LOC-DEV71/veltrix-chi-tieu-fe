@@ -6,6 +6,7 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isPinVerified, setPinVerified] = useState(false);
 
   const fetchUser = async () => {
     try {
@@ -53,6 +54,8 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem('token', data.token);
     }
     setUser(data);
+    // require PIN again on login
+    setPinVerified(false);
     return data;
   };
 
@@ -62,6 +65,7 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem('token', data.token);
     }
     setUser(data);
+    setPinVerified(false);
     return data;
   };
 
@@ -73,11 +77,12 @@ export const AuthProvider = ({ children }) => {
     } finally {
       localStorage.removeItem('token');
       setUser(null);
+      setPinVerified(false);
     }
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, loginWithGoogle, loginWithEmail, registerWithEmail, logout, updateUser }}>
+    <AuthContext.Provider value={{ user, loading, isPinVerified, setPinVerified, loginWithGoogle, loginWithEmail, registerWithEmail, logout, updateUser }}>
       {children}
     </AuthContext.Provider>
   );

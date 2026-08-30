@@ -24,14 +24,16 @@ import ChatList from './pages/ChatList';
 import ChatRoom from './pages/ChatRoom';
 import AdvancedAnalytics from './pages/AdvancedAnalytics';
 import PushNotificationManager from './components/PushNotificationManager';
+import PinScreen from './components/PinScreen';
 import './index.css';
 
 const ProtectedRoute = ({ children }) => {
-  const { user, loading } = useAuth();
+  const { user, loading, isPinVerified } = useAuth();
   
   // Only block if still doing initial auth check, then redirect if not logged in
   if (loading) return null;
   if (!user) return <Navigate to="/login" replace />;
+  if (!isPinVerified) return <PinScreen />;
   
   return children;
 };

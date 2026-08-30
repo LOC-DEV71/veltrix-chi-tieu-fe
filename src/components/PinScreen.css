@@ -1,0 +1,143 @@
+.pin-screen-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: var(--bg-main);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(20px);
+}
+
+.pin-container {
+  width: 100%;
+  max-width: 400px;
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.pin-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.pin-icon {
+  width: 64px;
+  height: 64px;
+  background: rgba(99, 102, 241, 0.1);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+  box-shadow: 0 0 20px rgba(99, 102, 241, 0.2);
+}
+
+.pin-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 8px;
+}
+
+.pin-subtitle {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.pin-dots {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 40px;
+  height: 20px;
+}
+
+.pin-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.2s ease;
+}
+
+.pin-dot.filled {
+  background-color: #818cf8;
+  border-color: #818cf8;
+  box-shadow: 0 0 10px rgba(129, 140, 248, 0.5);
+  transform: scale(1.1);
+}
+
+.error-shake {
+  animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+@keyframes shake {
+  10%, 90% { transform: translate3d(-1px, 0, 0); }
+  20%, 80% { transform: translate3d(2px, 0, 0); }
+  30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+  40%, 60% { transform: translate3d(4px, 0, 0); }
+}
+
+.pin-error-text {
+  color: #ef4444;
+  font-size: 14px;
+  margin-top: -20px;
+  margin-bottom: 20px;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.numpad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  width: 100%;
+  max-width: 320px;
+}
+
+.numpad-btn {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #fff;
+  font-size: 28px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.1s ease;
+  margin: 0 auto;
+}
+
+.numpad-btn:active {
+  background: rgba(255, 255, 255, 0.15);
+  transform: scale(0.95);
+}
+
+.numpad-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.numpad-btn.action-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+}
+
+.numpad-btn.action-btn:active {
+  color: #fff;
+}

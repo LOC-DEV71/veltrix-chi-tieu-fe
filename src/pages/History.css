@@ -10,17 +10,11 @@
 }
 
 .history-header {
+  margin-top: 10px;
+  margin-bottom: 24px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  position: sticky;
-  top: 0;
-  z-index: 40;
-  background: color-mix(in srgb, var(--bg-primary) 85%, transparent);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  margin: -20px -20px 24px -20px;
-  padding: 20px 20px 10px 20px;
 }
 
 .history-refresh-btn {

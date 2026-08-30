@@ -146,6 +146,17 @@ const AdvancedAnalytics = () => {
                 <div className="ai-text-body">
                   {report.aiCommentary}
                 </div>
+                
+                {/* Meme vui vẻ khi hết tiền hoặc rủi ro cao */}
+                {report.budgetRiskScore >= 80 && (
+                  <div style={{ marginTop: '16px', textAlign: 'center' }}>
+                    <img 
+                      src="/xin-loi-khong-tien.webp" 
+                      alt="Hết tiền rồi sếp ơi" 
+                      style={{ maxWidth: '100%', borderRadius: '12px', border: '2px solid rgba(239, 68, 68, 0.3)' }}
+                    />
+                  </div>
+                )}
               </div>
             </div>
           </>

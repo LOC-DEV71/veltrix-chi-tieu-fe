@@ -161,55 +161,9 @@ const Settings = () => {
       Swal.fire('Lỗi', 'Có lỗi xảy ra khi cài đặt thông báo.', 'error');
     }
   };
-
-  const handleCheckVersion = async () => {
-    try {
-      const res = await api.get('/system/version');
-      const serverVersion = res.data.version;
-      const currentVersion = import.meta.env.VITE_APP_VERSION || '1.0.0';
-      if (serverVersion !== currentVersion) {
-        Swal.fire({
-          title: 'Cập nhật phiên bản mới',
-          text: `Đã có phiên bản ${serverVersion}. Phiên bản của bạn là ${currentVersion}.`,
-          icon: 'info',
-          showCancelButton: true,
-          confirmButtonText: 'Cập nhật ngay',
-          cancelButtonText: 'Để sau',
-          background: '#18181b', color: '#fff',
-          customClass: { popup: 'glass-panel' }
-        }).then((result) => {
-          if (result.isConfirmed) {
-            localStorage.setItem('updating_to_version', serverVersion);
-            localStorage.setItem('updating_time', Date.now().toString());
-            Swal.fire({
-              title: 'Đang tải bản cập nhật...',
-              html: 'Quá trình này mất khoảng <b>1-2 phút</b> để cài đặt code mới.<br/>Vui lòng giữ nguyên màn hình!',
-              allowOutsideClick: false,
-              background: '#18181b', color: '#fff',
-              customClass: { popup: 'glass-panel' },
-              didOpen: () => {
-                Swal.showLoading();
-                setTimeout(() => {
-                  window.location.reload(true);
-                }, 15000);
-              }
-            });
-          }
-        });
-      } else {
-        Swal.fire({
-          icon: 'success',
-          title: 'Đã cập nhật',
-          text: 'Bạn đang sử dụng phiên bản mới nhất.',
-          background: '#18181b', color: '#fff',
-          customClass: { popup: 'glass-panel' }
-        });
-      }
-    } catch (err) {
-      Swal.fire('Lỗi', 'Không thể kiểm tra phiên bản', 'error');
-    }
+  const handleCheckVersion = () => {
+    window.dispatchEvent(new CustomEvent('MANUAL_VERSION_CHECK'));
   };
-
   const handleTogglePin = async () => {
     if (user?.hasPin) {
       const result = await Swal.fire({

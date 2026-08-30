@@ -1,25 +1,32 @@
 import React, { useEffect, useState } from 'react';
 import api from '../services/api';
-import Swal from 'sweetalert2';
+import './VersionChecker.css';
+import { Smartphone, Check, Loader2 } from 'lucide-react';
 
 const VersionChecker = () => {
-  useEffect(() => {
-    let hasAlerted = false;
+  const [show, setShow] = useState(false);
+  const [status, setStatus] = useState('idle'); // idle, updating, success
+  const [serverVer, setServerVer] = useState('');
+  const [localVer, setLocalVer] = useState('');
+  const [progress, setProgress] = useState(0);
 
-    const checkVersion = async () => {
-      if (hasAlerted) return;
-      try {
-        const { data } = await api.get(`/system/version?t=${Date.now()}`);
-        const serverVersion = data.version;
-        const localVersion = import.meta.env.VITE_APP_VERSION || '1.0.0';
+  const checkVersion = async (isManual = false) => {
+    if (status === 'updating') return;
+    try {
+      const { data } = await api.get(`/system/version?t=${Date.now()}`);
+      const sVer = data.version;
+      const lVer = import.meta.env.VITE_APP_VERSION || '1.0.0';
 
-        if (serverVersion !== localVersion) {
+      setServerVer(sVer);
+      setLocalVer(lVer);
+
+      if (sVer !== lVer) {
+        if (!isManual) {
           const updatingTo = localStorage.getItem('updating_to_version');
           const updatingTime = localStorage.getItem('updating_time');
           
-          if (updatingTo === serverVersion && updatingTime) {
+          if (updatingTo === sVer && updatingTime) {
             const timePassed = Date.now() - parseInt(updatingTime);
-            // Tránh spam cập nhật liên tục trong 3 phút (chờ Vercel build xong)
             if (timePassed < 3 * 60 * 1000) {
               return;
             } else {
@@ -27,47 +34,39 @@ const VersionChecker = () => {
               localStorage.removeItem('updating_time');
             }
           }
-
-          hasAlerted = true;
-          Swal.fire({
-            title: 'Phát hiện bản cập nhật mới!',
-            html: `Phiên bản <b>v${serverVersion}</b> đã có sẵn (Bạn đang dùng v${localVersion}).<br/><br/>Đây là bản cập nhật <b>bảo mật quan trọng</b>. Vui lòng cập nhật ngay để bảo vệ dữ liệu!`,
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#6366f1',
-            cancelButtonColor: '#6b7280',
-            confirmButtonText: 'Cập nhật ngay',
-            cancelButtonText: 'Để sau',
-            allowOutsideClick: false,
-            customClass: { popup: 'glass-panel' }
-          }).then((result) => {
-            if (result.isConfirmed) {
-              localStorage.setItem('updating_to_version', serverVersion);
-              localStorage.setItem('updating_time', Date.now().toString());
-              
-              Swal.fire({
-                title: 'Đang tải bản cập nhật...',
-                html: 'Quá trình này mất khoảng <b>1-2 phút</b> để cài đặt code mới.<br/>Vui lòng giữ nguyên màn hình!',
-                allowOutsideClick: false,
-                background: '#18181b', color: '#fff',
-                customClass: { popup: 'glass-panel' },
-                didOpen: () => {
-                  Swal.showLoading();
-                  // Chờ 15s rồi reload. Nếu Vercel chưa build xong, logic 3 phút sẽ chặn popup hiện lại
-                  setTimeout(() => {
-                    window.location.reload(true);
-                  }, 15000);
-                }
-              });
-            } else {
-              hasAlerted = false;
-            }
-          });
         }
-      } catch (error) {
-        console.error('Lỗi khi kiểm tra phiên bản:', error);
+        
+        setStatus('idle');
+        setProgress(0);
+        setShow(true);
+      } else if (isManual) {
+        import('sweetalert2').then(Swal => {
+           Swal.default.fire({
+             title: 'Đã cập nhật',
+             text: 'Bạn đang dùng phiên bản mới nhất.',
+             icon: 'success',
+             background: '#18181b', color: '#fff',
+             customClass: { popup: 'glass-panel' }
+           });
+        });
       }
-    };
+    } catch (error) {
+      console.error('Lỗi khi kiểm tra phiên bản:', error);
+    }
+  };
+
+  useEffect(() => {
+    const successVer = localStorage.getItem('show_update_success');
+    if (successVer) {
+      const lVer = import.meta.env.VITE_APP_VERSION || '1.0.0';
+      if (lVer === successVer) {
+        setServerVer(successVer);
+        setStatus('success');
+        setShow(true);
+      }
+      localStorage.removeItem('show_update_success');
+      return; 
+    }
 
     checkVersion();
 
@@ -76,15 +75,91 @@ const VersionChecker = () => {
         checkVersion();
       }
     };
+    
+    const handleManualCheck = () => {
+       checkVersion(true);
+    };
 
     document.addEventListener('visibilitychange', handleVisibilityChange);
-
+    window.addEventListener('MANUAL_VERSION_CHECK', handleManualCheck);
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('MANUAL_VERSION_CHECK', handleManualCheck);
     };
   }, []);
 
-  return null;
+  const handleUpdate = () => {
+    setStatus('updating');
+    localStorage.setItem('updating_to_version', serverVer);
+    localStorage.setItem('updating_time', Date.now().toString());
+    
+    let p = 0;
+    const interval = setInterval(() => {
+      p += Math.random() * 8 + 2; // Tang ngau nhien
+      if (p >= 95) {
+        p = 95;
+        clearInterval(interval);
+        localStorage.setItem('show_update_success', serverVer);
+        window.location.reload(true);
+      }
+      setProgress(p);
+    }, 1000);
+  };
+
+  const handleClose = () => {
+    setShow(false);
+  };
+
+  if (!show) return null;
+
+  return (
+    <div className="vc-overlay">
+      <div className="vc-modal">
+        {status === 'success' ? (
+          <>
+            <div className="vc-icon-wrap success">
+              <Check size={32} />
+            </div>
+            <h3 className="vc-title">Cập nhật thành công</h3>
+            <div className="vc-badge success">v{serverVer}</div>
+            <p className="vc-desc">Ứng dụng đã được cập nhật lên phiên bản mới nhất.</p>
+            <button className="vc-btn outline" onClick={handleClose}>
+              Đóng
+            </button>
+          </>
+        ) : (
+          <>
+            <div className="vc-icon-wrap primary">
+              <Smartphone size={32} strokeWidth={1.5} />
+            </div>
+            <h3 className="vc-title">Cập nhật phiên bản mới</h3>
+            <div className="vc-badge primary">v{serverVer}</div>
+            <p className="vc-desc">Vui lòng nhấn cập nhật để tải phiên bản mới nhất.</p>
+            
+            <button 
+              className="vc-btn primary" 
+              onClick={handleUpdate}
+              disabled={status === 'updating'}
+            >
+              {status === 'updating' ? (
+                <>
+                  <Loader2 size={20} className="spin" /> Đang cập nhật...
+                </>
+              ) : (
+                'Cập nhật'
+              )}
+            </button>
+            
+            {status === 'updating' && (
+              <div className="vc-progress-container">
+                <div className="vc-progress-fill" style={{ width: `${progress}%` }}></div>
+              </div>
+            )}
+          </>
+        )}
+      </div>
+    </div>
+  );
 };
 
 export default VersionChecker;

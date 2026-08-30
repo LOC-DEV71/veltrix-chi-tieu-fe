@@ -1,0 +1,146 @@
+.vc-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999999;
+  animation: vc-fade 0.3s ease;
+}
+
+.vc-modal {
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 32px 24px;
+  width: 90%;
+  max-width: 340px;
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  animation: vc-pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.vc-icon-wrap {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.vc-icon-wrap.primary {
+  background: #e0f2fe;
+  color: #0ea5e9;
+}
+
+.vc-icon-wrap.success {
+  background: #ecfccb;
+  color: #84cc16;
+}
+
+.vc-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 8px 0;
+}
+
+.vc-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  color: white;
+  margin-bottom: 16px;
+}
+
+.vc-badge.primary {
+  background: #0ea5e9;
+}
+
+.vc-badge.success {
+  background: #84cc16;
+}
+
+.vc-desc {
+  font-size: 14px;
+  color: #6b7280;
+  line-height: 1.5;
+  margin: 0 0 24px 0;
+}
+
+.vc-btn {
+  width: 100%;
+  padding: 14px;
+  border-radius: 100px;
+  font-size: 16px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.vc-btn.primary {
+  background: #0ea5e9;
+  color: white;
+}
+
+.vc-btn.primary:active {
+  background: #0284c7;
+}
+
+.vc-btn.outline {
+  background: transparent;
+  color: #0ea5e9;
+  border: 2px solid #0ea5e9;
+}
+
+.vc-btn.outline:active {
+  background: #f0f9ff;
+}
+
+.vc-progress-container {
+  height: 4px;
+  background: #f3f4f6;
+  border-radius: 4px;
+  margin-top: 16px;
+  overflow: hidden;
+  position: relative;
+}
+
+.vc-progress-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: #0ea5e9;
+  transition: width 0.3s ease;
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes vc-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes vc-pop {
+  0% { transform: scale(0.8); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}

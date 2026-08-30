@@ -2,41 +2,31 @@ import React, { useEffect, useState } from 'react';
 import api from '../services/api';
 import './VersionChecker.css';
 import { Smartphone, Check, Loader2 } from 'lucide-react';
-import versionData from '../version.json';
 
 const VersionChecker = () => {
   const [show, setShow] = useState(false);
-  const [status, setStatus] = useState('idle'); // idle, updating, success
-  const [serverVer, setServerVer] = useState('');
-  const [localVer, setLocalVer] = useState('');
+  const [status, setStatus] = useState('idle');
   const [progress, setProgress] = useState(0);
+
+  // BUILD_TIME được inject tự động bởi Vite mỗi lần build (mỗi lần Vercel deploy)
+  // eslint-disable-next-line no-undef
+  const MY_BUILD_TIME = typeof __BUILD_TIME__ !== 'undefined' ? __BUILD_TIME__ : '0';
 
   const checkVersion = async (isManual = false) => {
     if (status === 'updating') return;
     try {
       const { data } = await api.get(`/system/version?t=${Date.now()}`);
-      const sVer = data.version;
-      const lVer = versionData.version;
+      const serverTime = data.version; // timestamp khi Render khởi động - deploy mới = restart = timestamp mới
 
-      setServerVer(sVer);
-      setLocalVer(lVer);
+      // Nếu server restart time > thời điểm app được build -> có bản mới trên server
+      const hasUpdate = parseInt(serverTime) > parseInt(MY_BUILD_TIME);
 
-      if (sVer !== lVer) {
+      if (hasUpdate) {
         if (!isManual) {
-          const updatingTo = localStorage.getItem('updating_to_version');
-          const updatingTime = localStorage.getItem('updating_time');
-          
-          if (updatingTo === sVer && updatingTime) {
-            const timePassed = Date.now() - parseInt(updatingTime);
-            if (timePassed < 3 * 60 * 1000) {
-              return;
-            } else {
-              localStorage.removeItem('updating_to_version');
-              localStorage.removeItem('updating_time');
-            }
-          }
+          // Không spam nếu user vừa bấm dismiss
+          const dismissed = localStorage.getItem('dismissed_server_time');
+          if (dismissed === serverTime) return;
         }
-        
         setStatus('idle');
         setProgress(0);
         setShow(true);
@@ -57,16 +47,12 @@ const VersionChecker = () => {
   };
 
   useEffect(() => {
-    const successVer = localStorage.getItem('show_update_success');
-    if (successVer) {
-      const lVer = versionData.version;
-      if (lVer === successVer) {
-        setServerVer(successVer);
-        setStatus('success');
-        setShow(true);
-      }
+    const successFlag = localStorage.getItem('show_update_success');
+    if (successFlag) {
+      setStatus('success');
+      setShow(true);
       localStorage.removeItem('show_update_success');
-      return; 
+      return;
     }
 
     checkVersion();
@@ -91,16 +77,13 @@ const VersionChecker = () => {
 
   const handleUpdate = () => {
     setStatus('updating');
-    localStorage.setItem('updating_to_version', serverVer);
-    localStorage.setItem('updating_time', Date.now().toString());
-    
     let p = 0;
     const interval = setInterval(() => {
-      p += Math.random() * 8 + 2; // Tang ngau nhien
+      p += Math.random() * 8 + 2;
       if (p >= 95) {
         p = 95;
         clearInterval(interval);
-        localStorage.setItem('show_update_success', serverVer);
+        localStorage.setItem('show_update_success', '1');
         window.location.reload(true);
       }
       setProgress(p);
@@ -122,8 +105,7 @@ const VersionChecker = () => {
               <Check size={32} />
             </div>
             <h3 className="vc-title">Cập nhật thành công</h3>
-            <div className="vc-badge success">v{serverVer}</div>
-            <p className="vc-desc">Ứng dụng đã được cập nhật lên phiên bản mới nhất.</p>
+            <p className="vc-desc">Ứng dụng đã được tải phiên bản mới nhất.</p>
             <button className="vc-btn outline" onClick={handleClose}>
               Đóng
             </button>
@@ -133,9 +115,8 @@ const VersionChecker = () => {
             <div className="vc-icon-wrap primary">
               <Smartphone size={32} strokeWidth={1.5} />
             </div>
-            <h3 className="vc-title">Cập nhật phiên bản mới</h3>
-            <div className="vc-badge primary">v{serverVer}</div>
-            <p className="vc-desc">Vui lòng nhấn cập nhật để tải phiên bản mới nhất.</p>
+            <h3 className="vc-title">Có phiên bản mới!</h3>
+            <p className="vc-desc">Nhấn cập nhật để tải code mới nhất về thiết bị của bạn.</p>
             
             <button 
               className="vc-btn primary" 
@@ -144,10 +125,10 @@ const VersionChecker = () => {
             >
               {status === 'updating' ? (
                 <>
-                  <Loader2 size={20} className="spin" /> Đang cập nhật...
+                  <Loader2 size={20} className="spin" /> Đang tải...
                 </>
               ) : (
-                'Cập nhật'
+                'Cập nhật ngay'
               )}
             </button>
             

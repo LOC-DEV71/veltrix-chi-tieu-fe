@@ -57,7 +57,7 @@ const AppRoutes = () => {
           width: '100%',
           maxWidth: '480px',
           height: '100vh',
-          opacity: theme === 'dark' ? 0.15 : 0.08,
+          opacity: theme === 'dark' ? 0.35 : 0.45,
           zIndex: -1,
           pointerEvents: 'none',
           overflow: 'hidden'

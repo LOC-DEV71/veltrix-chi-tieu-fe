@@ -89,9 +89,11 @@ const ChatList = () => {
               <div className="chatlist-info">
                 <div className="chatlist-name">{conv.friend.name}</div>
                 <div className={`chatlist-latest ${conv.unreadCount > 0 ? 'unread' : ''}`}>
-                  {conv.latestMessage.sender._id === conv.friend._id 
-                    ? conv.latestMessage.text 
-                    : `Bạn: ${conv.latestMessage.text}`}
+                  {conv.latestMessage ? (
+                    conv.latestMessage.sender._id === conv.friend._id 
+                      ? conv.latestMessage.text 
+                      : `Bạn: ${conv.latestMessage.text}`
+                  ) : 'Bắt đầu cuộc trò chuyện mới'}
                 </div>
               </div>
             </div>

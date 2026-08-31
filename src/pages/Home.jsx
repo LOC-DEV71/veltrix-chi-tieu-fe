@@ -37,7 +37,8 @@ const Home = () => {
   const [loading, setLoading] = useState(true);
   const [showAvatarMenu, setShowAvatarMenu] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
-  const [scrollY, setScrollY] = useState(0);
+  const currentMonth = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`;
+  const [selectedMonth, setSelectedMonth] = useState(currentMonth);
 
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY);
@@ -48,8 +49,8 @@ const Home = () => {
   const fetchData = async () => {
     try {
       setLoading(true);
-      // 1. Get current budget
-      const budgetRes = await api.get('/budgets/current').catch(err => {
+      // 1. Get budget for selected month
+      const budgetRes = await api.get(`/budgets/current?month=${selectedMonth}`).catch(err => {
         if (err.response && err.response.status === 404) return null;
         throw err;
       });
@@ -126,7 +127,7 @@ const Home = () => {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [selectedMonth]);
 
   return (
     <div className="home-container" style={{ position: 'relative', overflow: 'hidden' }}>
@@ -153,9 +154,24 @@ const Home = () => {
       <div className="home-header" style={{ position: 'relative', zIndex: 10 }}>
         <div>
           <p className="home-greeting">Xin chào, {user?.name || 'Bạn'} 👋</p>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '13px', marginTop: '2px' }}>
-            Tháng {new Date().getMonth() + 1}/{new Date().getFullYear()}
-          </p>
+          <div style={{ marginTop: '4px' }}>
+            <input 
+              type="month" 
+              value={selectedMonth} 
+              onChange={(e) => setSelectedMonth(e.target.value)}
+              style={{
+                background: 'rgba(255, 255, 255, 0.1)',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                color: 'var(--text-secondary)',
+                borderRadius: '8px',
+                padding: '4px 8px',
+                fontSize: '13px',
+                outline: 'none',
+                fontFamily: 'inherit',
+                cursor: 'pointer'
+              }}
+            />
+          </div>
         </div>
         
         <div className="home-avatar-container" style={{ position: 'relative' }}>

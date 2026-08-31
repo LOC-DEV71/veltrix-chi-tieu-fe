@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { ChevronLeft, Send } from 'lucide-react';
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
@@ -9,11 +9,12 @@ import './ChatRoom.css';
 const ChatRoom = () => {
   const { friendId } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const { user } = useAuth();
   const { socket } = useSocket();
   
   const [messages, setMessages] = useState([]);
-  const [friend, setFriend] = useState(null);
+  const [friend, setFriend] = useState(location.state?.friend || null);
   const [inputText, setInputText] = useState('');
   const [loading, setLoading] = useState(true);
   const [isSending, setIsSending] = useState(false);
@@ -25,18 +26,28 @@ const ChatRoom = () => {
         const res = await api.get(`/messages/${friendId}`);
         setMessages(res.data);
         
-        // Find friend info from messages if possible, or fetch from friend API
-        if (res.data.length > 0) {
-          const sampleMsg = res.data[0];
-          if (sampleMsg.sender._id === friendId) {
-            setFriend(sampleMsg.sender);
+        if (!friend) {
+          if (res.data.length > 0) {
+            const sampleMsg = res.data[0];
+            if (sampleMsg.sender._id === friendId) {
+              setFriend(sampleMsg.sender);
+            } else {
+              setFriend(sampleMsg.receiver || { _id: friendId, name: 'Bạn bè' });
+            }
           } else {
-            setFriend(sampleMsg.receiver || { _id: friendId, name: 'Bạn bè' }); // receiver populate would be better, but we can fallback
+            // Fetch friend info from friends list
+            try {
+              const friendsRes = await api.get('/friends');
+              const foundFriend = friendsRes.data.find(f => f._id === friendId);
+              if (foundFriend) {
+                setFriend(foundFriend);
+              } else {
+                setFriend({ _id: friendId, name: 'Người dùng' });
+              }
+            } catch (err) {
+              setFriend({ _id: friendId, name: 'Người dùng' });
+            }
           }
-        } else {
-          // If no messages yet, we might need to fetch friend info separately
-          // For now, let's just show a generic name
-          setFriend({ _id: friendId, name: 'Người dùng' });
         }
       } catch (err) {
         console.error('Failed to load messages', err);

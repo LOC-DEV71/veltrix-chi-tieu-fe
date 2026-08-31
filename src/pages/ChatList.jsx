@@ -61,7 +61,7 @@ const ChatList = () => {
             <div 
               key={index} 
               className="chatlist-item" 
-              onClick={() => navigate(`/chat/${conv.friend._id}`)}
+              onClick={() => navigate(`/chat/${conv.friend._id}`, { state: { friend: conv.friend } })}
             >
               <div className="chatlist-avatar-wrapper" style={{ position: 'relative', width: '50px', height: '50px', marginRight: '15px' }}>
                 {conv.friend.avatar ? (

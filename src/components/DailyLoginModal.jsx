@@ -103,7 +103,7 @@ const DailyLoginModal = ({ onClose, forceShow = false }) => {
                 >
                   <div className="daily-reward-day">Ngày {reward.dayIndex}</div>
                   <div className="daily-reward-image-wrap">
-                    <img src={`/${reward.rewardId.imageUrl}`} alt={reward.rewardId.name} />
+                    <img src={reward.rewardId.imageUrl} alt={reward.rewardId.name} />
                     {isClaimed && <div className="daily-reward-check-overlay">✓</div>}
                   </div>
                   <p className="daily-reward-name">{reward.rewardId.name}</p>

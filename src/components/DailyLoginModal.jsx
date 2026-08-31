@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { X, Gift } from 'lucide-react';
 import api from '../services/api';
 import Swal from 'sweetalert2';
+import { useAuth } from '../context/AuthContext';
 import './DailyLoginModal.css';
 
 const DailyLoginModal = ({ onClose, forceShow = false }) => {
+  const { user, updateUser } = useAuth();
   const [loading, setLoading] = useState(true);
   const [statusData, setStatusData] = useState(null);
   const [claiming, setClaiming] = useState(false);
@@ -58,6 +60,17 @@ const DailyLoginModal = ({ onClose, forceShow = false }) => {
         title: 'Thành công',
         text: `Nhận phần thưởng ${data.data.reward.name} thành công!`
       });
+      
+      // Update AuthContext user state so it reflects immediately in Settings
+      if (user && data.data.reward) {
+        const productId = data.data.reward._id;
+        if (!user.unlockedProducts?.includes(productId)) {
+          updateUser({ 
+            ...user, 
+            unlockedProducts: [...(user.unlockedProducts || []), productId] 
+          });
+        }
+      }
       
       // Update status locally
       setStatusData({

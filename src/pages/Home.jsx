@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import BottomNav from '../components/BottomNav';
 import LoadingScreen from '../components/LoadingScreen';
+import DailyLoginModal from '../components/DailyLoginModal';
 import { 
   Plus, 
   ArrowUpRight, 
@@ -21,7 +22,8 @@ import {
   Sparkles,
   X,
   Flag,
-  Globe
+  Globe,
+  Gift
 } from 'lucide-react';
 import api from '../services/api';
 import './Home.css';
@@ -37,6 +39,7 @@ const Home = () => {
   const [loading, setLoading] = useState(true);
   const [showAvatarMenu, setShowAvatarMenu] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
+  const [showDailyLoginModalForce, setShowDailyLoginModalForce] = useState(false);
   const currentMonth = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`;
   const [selectedMonth, setSelectedMonth] = useState(currentMonth);
 
@@ -206,6 +209,16 @@ const Home = () => {
               >
                 <User size={16} />
                 Hồ sơ
+              </button>
+              <button 
+                className="home-avatar-menu-item"
+                onClick={() => {
+                  setShowAvatarMenu(false);
+                  setShowDailyLoginModalForce(true);
+                }}
+              >
+                <Gift size={16} />
+                Điểm danh
               </button>
               <button 
                 className="home-avatar-menu-item"
@@ -440,6 +453,12 @@ const Home = () => {
           </div>
         </div>
       )}
+
+      {/* Daily Login Modal */}
+      <DailyLoginModal 
+        forceShow={showDailyLoginModalForce} 
+        onClose={() => setShowDailyLoginModalForce(false)} 
+      />
     </div>
   );
 };

@@ -1,0 +1,165 @@
+.daily-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(5px);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.daily-modal-content {
+  background: var(--bg-card, #1e1e2e);
+  width: 90%;
+  max-width: 400px;
+  border-radius: 24px;
+  padding: 30px 20px;
+  position: relative;
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  animation: scaleUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.daily-modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary, #a1a1aa);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.daily-modal-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.daily-modal-header {
+  margin-bottom: 24px;
+}
+
+.daily-modal-icon-wrap {
+  width: 64px;
+  height: 64px;
+  background: linear-gradient(135deg, #f59e0b, #ef4444);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+  color: white;
+  box-shadow: 0 10px 20px rgba(245, 158, 11, 0.3);
+}
+
+.daily-modal-header h2 {
+  font-size: 24px;
+  margin: 0 0 8px 0;
+  background: linear-gradient(to right, #f59e0b, #fbbf24);
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.daily-modal-header p {
+  color: var(--text-secondary, #a1a1aa);
+  margin: 0;
+  font-size: 14px;
+}
+
+.daily-modal-header strong {
+  color: var(--text-primary, #fff);
+  font-size: 16px;
+}
+
+.daily-reward-card {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 16px;
+  padding: 24px 20px;
+  border: 1px dashed rgba(255, 255, 255, 0.1);
+}
+
+.daily-reward-card h3 {
+  margin: 0 0 20px 0;
+  font-size: 18px;
+  color: var(--text-primary, #fff);
+}
+
+.daily-reward-image-wrap {
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.daily-reward-image-wrap img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 10px 15px rgba(0,0,0,0.3));
+  animation: float 3s ease-in-out infinite;
+}
+
+.daily-reward-name {
+  font-weight: 600;
+  color: #fbbf24;
+  margin: 0 0 24px 0;
+  font-size: 16px;
+}
+
+.daily-claim-btn {
+  width: 100%;
+  padding: 14px;
+  border-radius: 12px;
+  border: none;
+  background: linear-gradient(135deg, #3b82f6, #6366f1);
+  color: white;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 8px 16px rgba(99, 102, 241, 0.3);
+}
+
+.daily-claim-btn:active {
+  transform: scale(0.96);
+}
+
+.daily-claim-btn.disabled {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-secondary, #a1a1aa);
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleUp {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}

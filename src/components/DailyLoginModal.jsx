@@ -19,17 +19,7 @@ const DailyLoginModal = ({ onClose, forceShow = false }) => {
         const { data } = await api.get('/rewards/daily/status');
         setStatusData(data.data);
         
-        // Check local storage for 12h cooldown
-        const lastDismissed = localStorage.getItem('daily_reward_dismissed');
-        const now = Date.now();
-        
-        // Show if forced, or if can claim today, or if 12h passed
-        if (
-          forceShow || 
-          data.data.canClaimToday || 
-          !lastDismissed || 
-          (now - parseInt(lastDismissed) > 12 * 60 * 60 * 1000)
-        ) {
+        if (forceShow) {
           setShow(true);
         }
       } catch (err) {

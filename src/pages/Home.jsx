@@ -44,6 +44,39 @@ const Home = () => {
   const [showEventsModal, setShowEventsModal] = useState(false);
   const currentMonth = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`;
   const [selectedMonth, setSelectedMonth] = useState(currentMonth);
+  const [scrollY, setScrollY] = useState(0);
+  const [feedItems, setFeedItems] = useState([]);
+  const [activeEvents, setActiveEvents] = useState([]);
+
+  useEffect(() => {
+    // Check local storage for cooldown to avoid annoying the user on every refresh
+    const checkAutoPopup = async () => {
+      try {
+        const { data } = await api.get('/events');
+        if (data.success && data.data) {
+          setActiveEvents(data.data);
+          
+          const autoEvent = data.data.find(e => e.isAutoPopup);
+          if (autoEvent) {
+            // Use specific keys based on event type to match modal close handlers
+            const storageKey = autoEvent.type === 'daily_login' ? 'daily_reward_dismissed' : `event_${autoEvent._id}_dismissed`;
+            const lastDismissed = localStorage.getItem(storageKey);
+            const now = Date.now();
+            // Show if not dismissed recently (12h cooldown)
+            if (!lastDismissed || (now - parseInt(lastDismissed) > 12 * 60 * 60 * 1000)) {
+              if (autoEvent.type === 'daily_login') {
+                setShowDailyLoginModalForce(true);
+              }
+            }
+          }
+        }
+      } catch (err) {
+        console.error('Error fetching events:', err);
+      }
+    };
+    
+    checkAutoPopup();
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY);

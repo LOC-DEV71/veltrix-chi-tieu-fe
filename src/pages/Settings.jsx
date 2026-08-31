@@ -553,7 +553,7 @@ const Settings = () => {
                     }}
                     title={!isUnlocked ? 'Bạn chưa sở hữu phần thưởng này' : product.name}
                   >
-                    <img src={`/${frameName}`} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                    <img src={frameName} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                     {!isUnlocked && (
                       <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.4)', borderRadius: '50%' }}>
                         <Lock size={20} color="rgba(255,255,255,0.8)" />

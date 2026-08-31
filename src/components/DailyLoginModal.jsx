@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Gift } from 'lucide-react';
 import api from '../services/api';
+import Swal from 'sweetalert2';
 import './DailyLoginModal.css';
 
 const DailyLoginModal = ({ onClose, forceShow = false }) => {
@@ -52,7 +53,11 @@ const DailyLoginModal = ({ onClose, forceShow = false }) => {
       const { data } = await api.post('/rewards/daily/claim');
       
       // Show success animation or toast here if needed
-      alert('Nhận phần thưởng thành công! ' + data.data.reward.name);
+      Swal.fire({
+        icon: 'success',
+        title: 'Thành công',
+        text: `Nhận phần thưởng ${data.data.reward.name} thành công!`
+      });
       
       // Update status locally
       setStatusData({

@@ -90,27 +90,45 @@ const DailyLoginModal = ({ onClose, forceShow = false }) => {
         </div>
         
         <div className="daily-modal-body">
-          {statusData?.nextReward ? (
-            <div className="daily-reward-card">
-              <h3>Ngày {statusData.claimedDays + 1}</h3>
-              <div className="daily-reward-image-wrap">
-                <img src={`/${statusData.nextReward.rewardId.imageUrl}`} alt="Reward" />
-              </div>
-              <p className="daily-reward-name">{statusData.nextReward.rewardId.name}</p>
+          <div className="daily-reward-grid">
+            {statusData?.allRewards?.map((reward) => {
+              const isClaimed = reward.dayIndex <= statusData.claimedDays;
+              const isNext = reward.dayIndex === statusData.claimedDays + 1;
+              const isLocked = reward.dayIndex > statusData.claimedDays + 1;
               
-              <button 
-                className={`daily-claim-btn ${!statusData.canClaimToday ? 'disabled' : ''}`}
-                onClick={handleClaim}
-                disabled={!statusData.canClaimToday || claiming}
-              >
-                {claiming ? 'Đang nhận...' : statusData.canClaimToday ? 'Nhận thưởng ngay' : 'Hôm nay đã nhận'}
-              </button>
-            </div>
-          ) : (
-            <div className="daily-reward-card empty">
-              <p>🎉 Chúc mừng! Bạn đã nhận toàn bộ phần thưởng hiện có. Hãy chờ thêm nhé!</p>
-            </div>
-          )}
+              return (
+                <div 
+                  key={reward._id} 
+                  className={`daily-reward-item ${isClaimed ? 'claimed' : ''} ${isNext ? 'next' : ''} ${isLocked ? 'locked' : ''}`}
+                >
+                  <div className="daily-reward-day">Ngày {reward.dayIndex}</div>
+                  <div className="daily-reward-image-wrap">
+                    <img src={`/${reward.rewardId.imageUrl}`} alt={reward.rewardId.name} />
+                    {isClaimed && <div className="daily-reward-check-overlay">✓</div>}
+                  </div>
+                  <p className="daily-reward-name">{reward.rewardId.name}</p>
+                  
+                  {isNext && (
+                    <button 
+                      className={`daily-claim-btn small ${!statusData.canClaimToday ? 'disabled' : ''}`}
+                      onClick={handleClaim}
+                      disabled={!statusData.canClaimToday || claiming}
+                    >
+                      {claiming ? '...' : statusData.canClaimToday ? 'Nhận' : 'Chờ mai'}
+                    </button>
+                  )}
+                  {isClaimed && <div className="daily-reward-status claimed">Đã nhận</div>}
+                  {isLocked && <div className="daily-reward-status locked">Khóa</div>}
+                </div>
+              );
+            })}
+            
+            {statusData?.allRewards?.length === 0 && (
+              <div className="daily-reward-card empty" style={{ gridColumn: '1 / -1' }}>
+                <p>🎉 Chúc mừng! Bạn đã nhận toàn bộ phần thưởng hiện có. Hãy chờ thêm nhé!</p>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

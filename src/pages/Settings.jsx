@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
@@ -9,15 +9,6 @@ import api from '../services/api';
 import PinScreen from '../components/PinScreen';
 import versionData from '../version.json';
 import './Settings.css';
-
-const AVATAR_FRAMES = [
-  'ao-giac.png', 'ao-mong-sac-dem.png', 'bach-duong.png', 'buom-tung-bay.png',
-  'canh-tien.png', 'cau-vong-vu-tru.png', 'chin-tang-may.png', 'chococat.png',
-  'cinnamoroll.png', 'cong-suy-ngam.png', 'dam-may-dong.png', 'do-mo-hoi.png',
-  'gian-du.png', 'gio-ke-chuyen.png', 'hello-kitty.png', 'hoa-hong-den.png',
-  'hoa-hong-hac-am.png', 'hoa-hong-trang.png', 'hoa-linh-lan.png', 
-  'hoa-quang-dien-thach-anh.png', 'hoang-hon-chang-vang.png', 'hoang-hon-xanh-lam.png'
-];
 
 const Settings = () => {
   const navigate = useNavigate();
@@ -32,6 +23,24 @@ const Settings = () => {
   const [isUploadingBg, setIsUploadingBg] = useState(false);
   const [showAdvancedModal, setShowAdvancedModal] = useState(false);
   const [showPinSetup, setShowPinSetup] = useState(false);
+  
+  const [products, setProducts] = useState([]);
+  
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const { data } = await api.get('/rewards/products');
+        if (data.success) {
+          setProducts(data.data);
+        }
+      } catch (err) {
+        console.error('Error fetching products:', err);
+      }
+    };
+    if (showAdvancedModal) {
+      fetchProducts();
+    }
+  }, [showAdvancedModal]);
 
   const handleLogout = async () => {
     const result = await Swal.fire({
@@ -526,21 +535,33 @@ const Settings = () => {
                 <X size={24} color="var(--text-secondary)" />
               </div>
               
-              {AVATAR_FRAMES.map(frame => (
-                <div 
-                  key={frame}
-                  onClick={() => handleUpdateAvatarFrame(frame)}
-                  style={{
-                    aspectRatio: '1', borderRadius: '50%',
-                    background: '#000',
-                    cursor: 'pointer',
-                    position: 'relative',
-                    border: user?.avatarFrame === frame ? '2px solid #10b981' : '2px solid transparent'
-                  }}
-                >
-                  <img src={`/${frame}`} alt={frame} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
-                </div>
-              ))}
+              {products.map(product => {
+                const isUnlocked = user?.unlockedProducts?.includes(product._id);
+                const frameName = product.imageUrl;
+                return (
+                  <div 
+                    key={product._id}
+                    onClick={() => isUnlocked && handleUpdateAvatarFrame(frameName)}
+                    style={{
+                      aspectRatio: '1', borderRadius: '50%',
+                      background: '#000',
+                      cursor: isUnlocked ? 'pointer' : 'not-allowed',
+                      position: 'relative',
+                      border: user?.avatarFrame === frameName ? '2px solid #10b981' : '2px solid transparent',
+                      opacity: isUnlocked ? 1 : 0.6,
+                      filter: isUnlocked ? 'none' : 'grayscale(0.8)'
+                    }}
+                    title={!isUnlocked ? 'Bạn chưa sở hữu phần thưởng này' : product.name}
+                  >
+                    <img src={`/${frameName}`} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                    {!isUnlocked && (
+                      <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.4)', borderRadius: '50%' }}>
+                        <Lock size={20} color="rgba(255,255,255,0.8)" />
+                      </div>
+                    )}
+                  </div>
+                )
+              })}
             </div>
           </div>
         </div>

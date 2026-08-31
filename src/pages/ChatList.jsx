@@ -58,7 +58,7 @@ const ChatList = () => {
                 )}
                 {conv.friend.avatarFrame && (
                   <img 
-                    src={`/${conv.friend.avatarFrame}`} 
+                    src={conv.friend.avatarFrame} 
                     alt="frame" 
                     style={{
                       position: 'absolute',

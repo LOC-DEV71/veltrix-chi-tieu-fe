@@ -268,7 +268,7 @@ const FriendsModal = ({ onClose }) => {
                   </div>
                 )}
                 {selectedFriendProfile.avatarFrame && (
-                  <img src={`/${selectedFriendProfile.avatarFrame}`} alt="frame" style={{ position: 'absolute', top: '-20%', left: '-20%', width: '140%', height: '140%', pointerEvents: 'none', zIndex: 2 }} />
+                  <img src={selectedFriendProfile.avatarFrame} alt="frame" style={{ position: 'absolute', top: '-20%', left: '-20%', width: '140%', height: '140%', pointerEvents: 'none', zIndex: 2 }} />
                 )}
               </div>
               <h2 style={{ margin: 0, color: '#fff', fontSize: '24px', fontWeight: 'bold', marginBottom: '8px' }}>{selectedFriendProfile.name}</h2>
@@ -355,7 +355,7 @@ const FriendsModal = ({ onClose }) => {
                         <div className="f-avatar-placeholder">{f.name.charAt(0)}</div>
                       )}
                       {f.avatarFrame && (
-                        <img src={`/${f.avatarFrame}`} alt="frame" style={{ position: 'absolute', top: '-20%', left: '-20%', width: '140%', height: '140%', pointerEvents: 'none', zIndex: 2 }} />
+                        <img src={f.avatarFrame} alt="frame" style={{ position: 'absolute', top: '-20%', left: '-20%', width: '140%', height: '140%', pointerEvents: 'none', zIndex: 2 }} />
                       )}
                     </div>
                     <div className="f-info">
@@ -405,7 +405,7 @@ const FriendsModal = ({ onClose }) => {
                         <div className="f-avatar-placeholder">{u.name.charAt(0)}</div>
                       )}
                       {u.avatarFrame && (
-                        <img src={`/${u.avatarFrame}`} alt="frame" style={{ position: 'absolute', top: '-20%', left: '-20%', width: '140%', height: '140%', pointerEvents: 'none', zIndex: 2 }} />
+                        <img src={u.avatarFrame} alt="frame" style={{ position: 'absolute', top: '-20%', left: '-20%', width: '140%', height: '140%', pointerEvents: 'none', zIndex: 2 }} />
                       )}
                     </div>
                     <div className="f-info">
@@ -434,7 +434,7 @@ const FriendsModal = ({ onClose }) => {
                         <div className="f-avatar-placeholder">{req.sender?.name?.charAt(0)}</div>
                       )}
                       {req.sender?.avatarFrame && (
-                        <img src={`/${req.sender.avatarFrame}`} alt="frame" style={{ position: 'absolute', top: '-20%', left: '-20%', width: '140%', height: '140%', pointerEvents: 'none', zIndex: 2 }} />
+                        <img src={req.sender.avatarFrame} alt="frame" style={{ position: 'absolute', top: '-20%', left: '-20%', width: '140%', height: '140%', pointerEvents: 'none', zIndex: 2 }} />
                       )}
                     </div>
                     <div className="f-info">

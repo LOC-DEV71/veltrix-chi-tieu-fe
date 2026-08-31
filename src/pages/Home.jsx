@@ -186,7 +186,7 @@ const Home = () => {
           />
           {user?.avatarFrame && (
             <img 
-              src={`/${user.avatarFrame}`} 
+              src={user.avatarFrame} 
               alt="frame" 
               style={{
                 position: 'absolute',
@@ -420,7 +420,7 @@ const Home = () => {
                 />
                 {user?.avatarFrame && (
                   <img 
-                    src={`/${user.avatarFrame}`} 
+                    src={user.avatarFrame} 
                     alt="frame" 
                     style={{
                       position: 'absolute',

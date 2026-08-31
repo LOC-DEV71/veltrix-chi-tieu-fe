@@ -174,7 +174,7 @@ const Profile = () => {
             />
             {user?.avatarFrame && (
               <img 
-                src={`/${user.avatarFrame}`} 
+                src={user.avatarFrame} 
                 alt="frame" 
                 style={{
                   position: 'absolute',

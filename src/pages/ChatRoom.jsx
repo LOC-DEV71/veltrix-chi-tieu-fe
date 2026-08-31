@@ -118,7 +118,7 @@ const ChatRoom = () => {
             )}
             {friend?.avatarFrame && (
               <img 
-                src={`/${friend.avatarFrame}`} 
+                src={friend.avatarFrame} 
                 alt="frame" 
                 style={{
                   position: 'absolute',

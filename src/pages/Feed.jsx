@@ -236,7 +236,7 @@ const Feed = () => {
           )}
           {user?.avatarFrame && (
             <img 
-              src={`/${user.avatarFrame}`} 
+              src={user.avatarFrame} 
               alt="frame" 
               style={{
                 position: 'absolute',
@@ -279,7 +279,7 @@ const Feed = () => {
                 )}
                 {u.avatarFrame && (
                   <img 
-                    src={`/${u.avatarFrame}`} 
+                    src={u.avatarFrame} 
                     alt="frame" 
                     style={{
                       position: 'absolute',
@@ -317,7 +317,7 @@ const Feed = () => {
                 )}
                 {r.user?.avatarFrame && (
                   <img 
-                    src={`/${r.user.avatarFrame}`} 
+                    src={r.user.avatarFrame} 
                     alt="frame" 
                     style={{
                       position: 'absolute',
@@ -346,7 +346,7 @@ const Feed = () => {
                 )}
                 {v?.avatarFrame && (
                   <img 
-                    src={`/${v.avatarFrame}`} 
+                    src={v.avatarFrame} 
                     alt="frame" 
                     style={{
                       position: 'absolute',

@@ -90,7 +90,7 @@ const AddFriend = () => {
                 )}
                 {friendUser.avatarFrame && (
                   <img 
-                    src={`/${friendUser.avatarFrame}`} 
+                    src={friendUser.avatarFrame} 
                     alt="frame" 
                     style={{
                       position: 'absolute',

@@ -5,6 +5,7 @@ import { useTheme } from '../context/ThemeContext';
 import BottomNav from '../components/BottomNav';
 import LoadingScreen from '../components/LoadingScreen';
 import DailyLoginModal from '../components/DailyLoginModal';
+import EventsModal from '../components/EventsModal';
 import { 
   Plus, 
   ArrowUpRight, 
@@ -40,6 +41,7 @@ const Home = () => {
   const [showAvatarMenu, setShowAvatarMenu] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showDailyLoginModalForce, setShowDailyLoginModalForce] = useState(false);
+  const [showEventsModal, setShowEventsModal] = useState(false);
   const currentMonth = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`;
   const [selectedMonth, setSelectedMonth] = useState(currentMonth);
 
@@ -214,7 +216,7 @@ const Home = () => {
                 className="home-avatar-menu-item"
                 onClick={() => {
                   setShowAvatarMenu(false);
-                  setShowDailyLoginModalForce(true);
+                  setShowEventsModal(true);
                 }}
               >
                 <Gift size={16} />
@@ -455,6 +457,12 @@ const Home = () => {
       )}
 
       {/* Daily Login Modal */}
+      {showEventsModal && (
+        <EventsModal 
+          onClose={() => setShowEventsModal(false)}
+          onOpenDailyLogin={() => setShowDailyLoginModalForce(true)}
+        />
+      )}
       <DailyLoginModal 
         forceShow={showDailyLoginModalForce} 
         onClose={() => setShowDailyLoginModalForce(false)} 

@@ -15,10 +15,13 @@ const VersionChecker = () => {
   const checkVersion = async (isManual = false) => {
     if (status === 'updating') return;
     try {
-      const { data } = await api.get(`/system/version?t=${Date.now()}`);
-      const serverTime = data.version; // timestamp khi Render khởi động - deploy mới = restart = timestamp mới
+      // Tải meta.json từ chính domain của frontend để biết khi nào Vercel có bản build mới
+      const response = await fetch(`/meta.json?t=${Date.now()}`);
+      if (!response.ok) return;
+      const data = await response.json();
+      const serverTime = data.version; 
 
-      // Nếu server restart time > thời điểm app được build -> có bản mới trên server
+      // Nếu meta.json time > thời điểm app được build -> có bản mới
       const hasUpdate = parseInt(serverTime) > parseInt(MY_BUILD_TIME);
 
       if (hasUpdate) {

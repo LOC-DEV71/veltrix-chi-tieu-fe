@@ -218,7 +218,7 @@ const Home = () => {
                 }}
               >
                 <Gift size={16} />
-                Điểm danh
+                Sự kiện
               </button>
               <button 
                 className="home-avatar-menu-item"

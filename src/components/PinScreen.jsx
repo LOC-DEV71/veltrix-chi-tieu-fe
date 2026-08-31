@@ -49,7 +49,10 @@ const PinScreen = ({ mode = 'lock', onSuccess, onCancel }) => {
   const setupPin = async (finalPin) => {
     try {
       setLoading(true);
-      await api.post('/auth/setup-pin', { pin: finalPin });
+      const res = await api.post('/auth/setup-pin', { pin: finalPin });
+      if (res.data.pinToken) {
+        localStorage.setItem('jwt_pin', res.data.pinToken);
+      }
       updateUser({ ...user, hasPin: true });
       setPinVerified(true);
       Swal.fire({
@@ -74,7 +77,10 @@ const PinScreen = ({ mode = 'lock', onSuccess, onCancel }) => {
   const verifyPin = async (enteredPin) => {
     try {
       setLoading(true);
-      await api.post('/auth/verify-pin', { pin: enteredPin });
+      const res = await api.post('/auth/verify-pin', { pin: enteredPin });
+      if (res.data && res.data.pinToken) {
+        localStorage.setItem('jwt_pin', res.data.pinToken);
+      }
       if (mode === 'confirm') {
         if (onSuccess) onSuccess();
       } else {

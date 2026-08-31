@@ -30,6 +30,20 @@ export const AuthProvider = ({ children }) => {
       setUser(data);
       if (!data.hasPin) {
         setPinVerified(true);
+      } else {
+        const pinToken = localStorage.getItem('jwt_pin');
+        if (pinToken) {
+          try {
+            const validateRes = await api.post('/auth/validate-pin-token', { pinToken });
+            if (validateRes.data.isValid) {
+              setPinVerified(true);
+            } else {
+              localStorage.removeItem('jwt_pin');
+            }
+          } catch (err) {
+            localStorage.removeItem('jwt_pin');
+          }
+        }
       }
     } catch (error) {
       localStorage.removeItem('token');
@@ -61,8 +75,12 @@ export const AuthProvider = ({ children }) => {
     // We should fetch auth/me to get the real hasPin status
     const meRes = await api.get('/auth/me');
     setUser(meRes.data);
-    if (!meRes.data.hasPin) setPinVerified(true);
-    else setPinVerified(false);
+    if (!meRes.data.hasPin) {
+      setPinVerified(true);
+    } else {
+      localStorage.removeItem('jwt_pin');
+      setPinVerified(false);
+    }
     
     return data;
   };
@@ -84,6 +102,7 @@ export const AuthProvider = ({ children }) => {
       console.error('Logout failed', error);
     } finally {
       localStorage.removeItem('token');
+      localStorage.removeItem('jwt_pin');
       setUser(null);
       setPinVerified(false);
     }

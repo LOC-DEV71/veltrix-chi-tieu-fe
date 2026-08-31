@@ -92,6 +92,8 @@ const DailyLoginModal = ({ onClose, forceShow = false }) => {
         <div className="daily-modal-body">
           <div className="daily-reward-grid">
             {statusData?.allRewards?.map((reward) => {
+              if (!reward.rewardId) return null; // Safeguard for orphaned records
+              
               const isClaimed = reward.dayIndex <= statusData.claimedDays;
               const isNext = reward.dayIndex === statusData.claimedDays + 1;
               const isLocked = reward.dayIndex > statusData.claimedDays + 1;

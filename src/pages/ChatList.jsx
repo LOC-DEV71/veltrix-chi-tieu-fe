@@ -2,26 +2,41 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronLeft } from 'lucide-react';
 import api from '../services/api';
+import { useSocket } from '../context/SocketContext';
 import './ChatList.css';
 
 const ChatList = () => {
   const navigate = useNavigate();
   const [conversations, setConversations] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { socket } = useSocket();
+
+  const fetchConversations = async () => {
+    try {
+      const res = await api.get('/messages/conversations');
+      setConversations(res.data);
+    } catch (err) {
+      console.error('Failed to load conversations', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchConversations = async () => {
-      try {
-        const res = await api.get('/messages/conversations');
-        setConversations(res.data);
-      } catch (err) {
-        console.error('Failed to load conversations', err);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchConversations();
   }, []);
+
+  useEffect(() => {
+    if (!socket) return;
+    
+    const handleNewMessage = () => {
+      // Refresh the list when a new message arrives (sent or received)
+      fetchConversations();
+    };
+
+    socket.on('newMessage', handleNewMessage);
+    return () => socket.off('newMessage', handleNewMessage);
+  }, [socket]);
 
   return (
     <div className="chatlist-container">

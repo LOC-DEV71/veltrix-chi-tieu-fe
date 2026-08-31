@@ -59,9 +59,9 @@
 .history-filters {
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 20px;
-  padding: 16px;
-  margin-bottom: 24px;
+  border-radius: 16px;
+  padding: 12px;
+  margin-bottom: 20px;
 }
 
 .history-filter-row {
@@ -73,11 +73,11 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
 }
 
 .history-filter-group label {
-  font-size: 12px;
+  font-size: 11px;
   color: var(--text-secondary);
   font-weight: 500;
 }
@@ -86,9 +86,9 @@
   background: var(--bg-glass);
   border: var(--glass-border);
   color: var(--text-primary);
-  padding: 10px 8px;
-  border-radius: 12px;
-  font-size: 13px;
+  padding: 8px 8px;
+  border-radius: 10px;
+  font-size: 12px;
   outline: none;
   width: 100%;
   min-width: 0;

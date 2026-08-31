@@ -137,6 +137,27 @@ const History = () => {
             ))}
           </select>
         </div>
+        
+        {!loading && transactions.length > 0 && (
+          <div style={{ 
+            marginTop: '12px', 
+            paddingTop: '12px', 
+            borderTop: '1px solid var(--border-color)',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center'
+          }}>
+            <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>Tổng chi tiêu:</span>
+            <span style={{ 
+              fontSize: '16px', 
+              fontWeight: 'bold', 
+              color: transactions.reduce((sum, tx) => tx.type === 'expense' ? sum - tx.amount : sum + tx.amount, 0) < 0 ? 'var(--accent-danger)' : 'var(--accent-success)' 
+            }}>
+              {transactions.reduce((sum, tx) => tx.type === 'expense' ? sum - tx.amount : sum + tx.amount, 0) < 0 ? '-' : '+'}
+              {Math.abs(transactions.reduce((sum, tx) => tx.type === 'expense' ? sum - tx.amount : sum + tx.amount, 0)).toLocaleString('vi-VN')}đ
+            </span>
+          </div>
+        )}
       </div>
 
       <div className="history-list">

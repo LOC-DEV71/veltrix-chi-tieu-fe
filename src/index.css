@@ -43,10 +43,10 @@
 
 /* ─── LIGHT THEME ─────────────────────────────── */
 [data-theme='light'] {
-  --bg-primary: #f0f4ff;
-  --bg-secondary: #ffffff;
-  --bg-glass: rgba(255, 255, 255, 0.75);
-  --bg-glass-hover: rgba(240, 244, 255, 0.9);
+  --bg-primary: rgba(240, 244, 255, 0.85);
+  --bg-secondary: rgba(255, 255, 255, 0.6);
+  --bg-glass: rgba(255, 255, 255, 0.45);
+  --bg-glass-hover: rgba(255, 255, 255, 0.65);
   
   --text-primary: #0f172a;
   --text-secondary: #64748b;

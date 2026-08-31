@@ -227,7 +227,7 @@ const Feed = () => {
 
   const locketHeader = (
     <div className="locket-header">
-      <div className="locket-avatar-btn" onClick={() => setShowFriendsModal(true)}>
+      <div className="locket-avatar-btn" onClick={() => navigate('/friends')}>
         <div className="locket-avatar-inner">
           {user?.avatar ? (
             <img src={user.avatar} alt="You" />

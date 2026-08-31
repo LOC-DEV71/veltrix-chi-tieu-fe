@@ -22,6 +22,7 @@ import Statistics from './pages/Statistics';
 import AiChat from './pages/AiChat';
 import ChatList from './pages/ChatList';
 import ChatRoom from './pages/ChatRoom';
+import Friends from './pages/Friends';
 import AdvancedAnalytics from './pages/AdvancedAnalytics';
 import PushNotificationManager from './components/PushNotificationManager';
 import PinScreen from './components/PinScreen';
@@ -159,6 +160,7 @@ const AppRoutes = () => {
       <Route path="/advanced-analytics" element={<ProtectedRoute><AdvancedAnalytics /></ProtectedRoute>} />
       <Route path="/ai-chat" element={<ProtectedRoute><AiChat /></ProtectedRoute>} />
       <Route path="/messages" element={<ProtectedRoute><ChatList /></ProtectedRoute>} />
+      <Route path="/friends" element={<ProtectedRoute><Friends /></ProtectedRoute>} />
       <Route path="/chat/:friendId" element={<ProtectedRoute><ChatRoom /></ProtectedRoute>} />
       <Route path="/transaction/:id" element={<ProtectedRoute><TransactionDetail /></ProtectedRoute>} />
       <Route path="/success" element={<ProtectedRoute><Success /></ProtectedRoute>} />
